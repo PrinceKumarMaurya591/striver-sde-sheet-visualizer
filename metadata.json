@@ -1,0 +1,6 @@
+{
+  "name": "Striver SDE Sheet Visualizer",
+  "description": "A visual-based website that helps solve and interactively visualize step-by-step logic and algorithm flow for Striver SDE Sheet DSA questions.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
