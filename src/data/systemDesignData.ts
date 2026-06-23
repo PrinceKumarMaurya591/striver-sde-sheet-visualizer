@@ -19,30 +19,38 @@ export const DESIGN_PATTERNS: DesignPattern[] = [
       { id: "Singleton", name: "Singleton", type: "class", methods: ["getInstance()", "getData()", "setData()"], fields: ["- instance: Singleton", "- data: any"] },
     ],
     structure: [],
-    codeExample: `class Singleton {
-  private static instance: Singleton;
-  private data: any;
+    codeExample: `public class Singleton {
+    private static volatile Singleton instance;
+    private Object data;
 
-  private constructor() {
-    this.data = null;
-  }
-
-  static getInstance(): Singleton {
-    if (!Singleton.instance) {
-      Singleton.instance = new Singleton();
+    private Singleton() {
+        this.data = null;
     }
-    return Singleton.instance;
-  }
 
-  setData(data: any): void { this.data = data; }
-  getData(): any { return this.data; }
+    public static Singleton getInstance() {
+        if (instance == null) {
+            synchronized (Singleton.class) {
+                if (instance == null) {
+                    instance = new Singleton();
+                }
+            }
+        }
+        return instance;
+    }
+
+    public void setData(Object data) { this.data = data; }
+    public Object getData() { return this.data; }
 }
 
 // Usage
-const s1 = Singleton.getInstance();
-s1.setData("Hello");
-const s2 = Singleton.getInstance();
-console.log(s2.getData()); // "Hello" (same instance)`,
+public class Main {
+    public static void main(String[] args) {
+        Singleton s1 = Singleton.getInstance();
+        s1.setData("Hello");
+        Singleton s2 = Singleton.getInstance();
+        System.out.println(s2.getData()); // "Hello" (same instance)
+    }
+}`,
     realWorldExample: "A national government — there is only one central government for a country, providing a single point of control for laws and policies.",
     whenToUse: [
       "Exactly one instance of a class is required",
@@ -71,36 +79,40 @@ console.log(s2.getData()); // "Hello" (same instance)`,
       { from: "Creator", to: "Product", type: "dependency", toLabel: "creates" },
     ],
     codeExample: `interface Transport {
-  deliver(): void;
+    void deliver();
 }
 
 class Truck implements Transport {
-  deliver(): void { console.log("Deliver by land"); }
+    public void deliver() { System.out.println("Deliver by land"); }
 }
 
 class Ship implements Transport {
-  deliver(): void { console.log("Deliver by sea"); }
+    public void deliver() { System.out.println("Deliver by sea"); }
 }
 
 abstract class Logistics {
-  abstract createTransport(): Transport;
+    abstract Transport createTransport();
 
-  planDelivery(): void {
-    const transport = this.createTransport();
-    transport.deliver();
-  }
+    void planDelivery() {
+        Transport transport = createTransport();
+        transport.deliver();
+    }
 }
 
 class RoadLogistics extends Logistics {
-  createTransport(): Transport { return new Truck(); }
+    Transport createTransport() { return new Truck(); }
 }
 
 class SeaLogistics extends Logistics {
-  createTransport(): Transport { return new Ship(); }
+    Transport createTransport() { return new Ship(); }
 }
 
 // Usage
-new RoadLogistics().planDelivery(); // "Deliver by land"`,
+public class Main {
+    public static void main(String[] args) {
+        new RoadLogistics().planDelivery(); // "Deliver by land"
+    }
+}`,
     realWorldExample: "A recruitment agency (Creator) has a generic 'hire' process. Different departments (ConcreteCreators) create specific roles (Products) like Engineer, Designer, or Manager.",
     whenToUse: [
       "You don't know the exact types of objects your code will work with",
@@ -130,32 +142,44 @@ new RoadLogistics().planDelivery(); // "Deliver by land"`,
       { from: "ConcreteFactory1", to: "ProductA", type: "dependency", toLabel: "creates" },
       { from: "ConcreteFactory2", to: "ProductB", type: "dependency", toLabel: "creates" },
     ],
-    codeExample: `interface Button { render(): void; }
-interface Checkbox { render(): void; }
+    codeExample: `interface Button { void render(); }
+interface Checkbox { void render(); }
 
-class WinButton implements Button { render(): void { console.log("Windows Button"); } }
-class MacButton implements Button { render(): void { console.log("Mac Button"); } }
-class WinCheckbox implements Checkbox { render(): void { console.log("Windows Checkbox"); } }
-class MacCheckbox implements Checkbox { render(): void { console.log("Mac Checkbox"); } }
+class WinButton implements Button {
+    public void render() { System.out.println("Windows Button"); }
+}
+class MacButton implements Button {
+    public void render() { System.out.println("Mac Button"); }
+}
+class WinCheckbox implements Checkbox {
+    public void render() { System.out.println("Windows Checkbox"); }
+}
+class MacCheckbox implements Checkbox {
+    public void render() { System.out.println("Mac Checkbox"); }
+}
 
 interface GUIFactory {
-  createButton(): Button;
-  createCheckbox(): Checkbox;
+    Button createButton();
+    Checkbox createCheckbox();
 }
 
 class WinFactory implements GUIFactory {
-  createButton(): Button { return new WinButton(); }
-  createCheckbox(): Checkbox { return new WinCheckbox(); }
+    public Button createButton() { return new WinButton(); }
+    public Checkbox createCheckbox() { return new WinCheckbox(); }
 }
 
 class MacFactory implements GUIFactory {
-  createButton(): Button { return new MacButton(); }
-  createCheckbox(): Checkbox { return new MacCheckbox(); }
+    public Button createButton() { return new MacButton(); }
+    public Checkbox createCheckbox() { return new MacCheckbox(); }
 }
 
 // Usage
-const factory: GUIFactory = new WinFactory();
-factory.createButton().render(); // "Windows Button"`,
+public class Main {
+    public static void main(String[] args) {
+        GUIFactory factory = new WinFactory();
+        factory.createButton().render(); // "Windows Button"
+    }
+}`,
     realWorldExample: "Furniture stores (IKEA, Ashley) produce complete furniture families (Victorian, Modern). Each family has matching chair, sofa, and coffee table — you can't mix Victorian chair with Modern sofa.",
     whenToUse: [
       "Your system needs to be independent of how its products are created",
@@ -184,28 +208,46 @@ factory.createButton().render(); // "Windows Button"`,
       { from: "ConcreteBuilder", to: "Product", type: "dependency", toLabel: "builds" },
     ],
     codeExample: `class Pizza {
-  public size: string = "";
-  public cheese: boolean = false;
-  public pepperoni: boolean = false;
-  public mushrooms: boolean = false;
+    public String size = "";
+    public boolean cheese = false;
+    public boolean pepperoni = false;
+    public boolean mushrooms = false;
+    
+    public String toString() {
+        return "Pizza(" + size + ", cheese=" + cheese +
+               ", pepperoni=" + pepperoni + ", mushrooms=" + mushrooms + ")";
+    }
 }
 
 class PizzaBuilder {
-  private pizza: Pizza = new Pizza();
+    private Pizza pizza = new Pizza();
 
-  setSize(size: string): this { this.pizza.size = size; return this; }
-  addCheese(): this { this.pizza.cheese = true; return this; }
-  addPepperoni(): this { this.pizza.pepperoni = true; return this; }
-  addMushrooms(): this { this.pizza.mushrooms = true; return this; }
-  build(): Pizza { return this.pizza; }
+    public PizzaBuilder setSize(String size) {
+        this.pizza.size = size; return this;
+    }
+    public PizzaBuilder addCheese() {
+        this.pizza.cheese = true; return this;
+    }
+    public PizzaBuilder addPepperoni() {
+        this.pizza.pepperoni = true; return this;
+    }
+    public PizzaBuilder addMushrooms() {
+        this.pizza.mushrooms = true; return this;
+    }
+    public Pizza build() { return this.pizza; }
 }
 
 // Usage
-const pizza = new PizzaBuilder()
-  .setSize("Large")
-  .addCheese()
-  .addPepperoni()
-  .build();`,
+public class Main {
+    public static void main(String[] args) {
+        Pizza pizza = new PizzaBuilder()
+            .setSize("Large")
+            .addCheese()
+            .addPepperoni()
+            .build();
+        System.out.println(pizza);
+    }
+}`,
     realWorldExample: "A Subway sandwich shop — you go through a step-by-step process: choose bread → choose toppings → choose sauces → toast. The same process creates different sandwiches.",
     whenToUse: [
       "You have complex objects with many optional components",
@@ -232,30 +274,47 @@ const pizza = new PizzaBuilder()
       { from: "ConcretePrototype2", to: "Prototype", type: "implementation" },
     ],
     codeExample: `interface Prototype {
-  clone(): Prototype;
+    Prototype clone();
 }
 
 class Shape implements Prototype {
-  constructor(public x: number, public y: number, public color: string) {}
+    private int x, y;
+    private String color;
 
-  clone(): Shape {
-    return new Shape(this.x, this.y, this.color);
-  }
+    public Shape(int x, int y, String color) {
+        this.x = x; this.y = y; this.color = color;
+    }
+
+    public Prototype clone() {
+        return new Shape(this.x, this.y, this.color);
+    }
+    
+    public String toString() {
+        return "Shape(" + x + "," + y + "," + color + ")";
+    }
 }
 
 class Circle extends Shape {
-  constructor(x: number, y: number, color: string, public radius: number) {
-    super(x, y, color);
-  }
+    private int radius;
 
-  clone(): Circle {
-    return new Circle(this.x, this.y, this.color, this.radius);
-  }
+    public Circle(int x, int y, String color, int radius) {
+        super(x, y, color);
+        this.radius = radius;
+    }
+
+    public Prototype clone() {
+        return new Circle(x, y, color, radius); // using inherited fields
+    }
 }
 
 // Usage
-const circle = new Circle(10, 20, "red", 5);
-const clone = circle.clone(); // No need to recalculate anything`,
+public class Main {
+    public static void main(String[] args) {
+        Circle circle = new Circle(10, 20, "red", 5);
+        Circle clone = (Circle) circle.clone();
+        System.out.println(clone);
+    }
+}`,
     realWorldExample: "A cookie cutter — once you have a cookie cutter (prototype), you can produce countless identical cookies without remeasuring or reshaping each time.",
     whenToUse: [
       "Object creation is expensive (DB, network, complex init)",
@@ -288,26 +347,38 @@ const clone = circle.clone(); // No need to recalculate anything`,
       { from: "Client", to: "Target", type: "dependency", toLabel: "uses" },
     ],
     codeExample: `interface MediaPlayer {
-  play(audioType: string, fileName: string): void;
+    void play(String audioType, String fileName);
 }
 
 class AdvancedMediaPlayer {
-  playVlc(fileName: string): void { console.log("Playing vlc: " + fileName); }
-  playMp4(fileName: string): void { console.log("Playing mp4: " + fileName); }
+    public void playVlc(String fileName) {
+        System.out.println("Playing vlc: " + fileName);
+    }
+    public void playMp4(String fileName) {
+        System.out.println("Playing mp4: " + fileName);
+    }
 }
 
 class MediaAdapter implements MediaPlayer {
-  constructor(private advancedPlayer: AdvancedMediaPlayer) {}
+    private AdvancedMediaPlayer advancedPlayer;
 
-  play(audioType: string, fileName: string): void {
-    if (audioType === "vlc") this.advancedPlayer.playVlc(fileName);
-    else if (audioType === "mp4") this.advancedPlayer.playMp4(fileName);
-  }
+    public MediaAdapter(AdvancedMediaPlayer advancedPlayer) {
+        this.advancedPlayer = advancedPlayer;
+    }
+
+    public void play(String audioType, String fileName) {
+        if (audioType.equals("vlc")) advancedPlayer.playVlc(fileName);
+        else if (audioType.equals("mp4")) advancedPlayer.playMp4(fileName);
+    }
 }
 
 // Usage
-const adapter = new MediaAdapter(new AdvancedMediaPlayer());
-adapter.play("mp4", "movie.mp4"); // "Playing mp4: movie.mp4"`,
+public class Main {
+    public static void main(String[] args) {
+        MediaAdapter adapter = new MediaAdapter(new AdvancedMediaPlayer());
+        adapter.play("mp4", "movie.mp4"); // "Playing mp4: movie.mp4"
+    }
+}`,
     realWorldExample: "A power plug adapter — a US plug (Adaptee) has a different shape than a European socket (Target). The travel adapter (Adapter) bridges the two, letting US devices work in European outlets.",
     whenToUse: [
       "You want to use an existing class but its interface doesn't match",
@@ -395,35 +466,43 @@ console.log(coffee.description() + " = $" + coffee.cost());
       { from: "Proxy", to: "RealSubject", type: "composition", toLabel: "controls" },
     ],
     codeExample: `interface Image {
-  display(): void;
+    void display();
 }
 
 class RealImage implements Image {
-  constructor(private filename: string) {
-    this.loadFromDisk(); // Expensive operation
-  }
-  private loadFromDisk(): void { console.log("Loading: " + this.filename); }
-  display(): void { console.log("Displaying: " + this.filename); }
+    private String filename;
+
+    public RealImage(String filename) {
+        this.filename = filename;
+        loadFromDisk(); // Expensive operation
+    }
+    private void loadFromDisk() { System.out.println("Loading: " + filename); }
+    public void display() { System.out.println("Displaying: " + filename); }
 }
 
 class ProxyImage implements Image {
-  private realImage: RealImage | null = null;
+    private RealImage realImage;
+    private String filename;
 
-  constructor(private filename: string) {}
+    public ProxyImage(String filename) { this.filename = filename; }
 
-  display(): void {
-    if (!this.realImage) {
-      this.realImage = new RealImage(this.filename); // Lazy load
+    public void display() {
+        if (realImage == null) {
+            realImage = new RealImage(filename); // Lazy load
+        }
+        realImage.display();
     }
-    this.realImage.display();
-  }
 }
 
 // Usage
-const image = new ProxyImage("photo.jpg");
-// Image NOT loaded yet
-image.display(); // Loads & displays
-image.display(); // Only displays (cached)`,
+public class Main {
+    public static void main(String[] args) {
+        Image image = new ProxyImage("photo.jpg");
+        // Image NOT loaded yet
+        image.display(); // Loads & displays
+        image.display(); // Only displays (cached)
+    }
+}`,
     realWorldExample: "A credit card (Proxy) is a proxy for your bank account (RealSubject). The card controls access, provides logging, and can add caching (holds pending transactions) — the merchant doesn't need to interact with the bank directly.",
     whenToUse: [
       "Lazy initialization (virtual proxy)",
@@ -453,38 +532,42 @@ image.display(); // Only displays (cached)`,
       { from: "Facade", to: "SubsystemC", type: "dependency", toLabel: "delegates to" },
     ],
     codeExample: `class CPU {
-  freeze(): void { console.log("CPU frozen"); }
-  jump(position: number): void { console.log("Jump to " + position); }
-  execute(): void { console.log("CPU executing"); }
+    public void freeze() { System.out.println("CPU frozen"); }
+    public void jump(int position) { System.out.println("Jump to " + position); }
+    public void execute() { System.out.println("CPU executing"); }
 }
 
 class Memory {
-  load(position: number, data: string): void {
-    console.log("Load '" + data + "' at " + position);
-  }
+    public void load(int position, String data) {
+        System.out.println("Load '" + data + "' at " + position);
+    }
 }
 
 class HardDrive {
-  read(lba: number, size: number): string {
-    return "boot_data_" + lba;
-  }
+    public String read(int lba, int size) {
+        return "boot_data_" + lba;
+    }
 }
 
 class ComputerFacade {
-  private cpu = new CPU();
-  private memory = new Memory();
-  private hd = new HardDrive();
+    private CPU cpu = new CPU();
+    private Memory memory = new Memory();
+    private HardDrive hd = new HardDrive();
 
-  start(): void {
-    this.cpu.freeze();
-    this.memory.load(0, this.hd.read(0, 1024));
-    this.cpu.jump(0);
-    this.cpu.execute();
-  }
+    public void start() {
+        cpu.freeze();
+        memory.load(0, hd.read(0, 1024));
+        cpu.jump(0);
+        cpu.execute();
+    }
 }
 
 // Usage
-new ComputerFacade().start(); // Simple one-call interface`,
+public class Main {
+    public static void main(String[] args) {
+        new ComputerFacade().start(); // Simple one-call interface
+    }
+}`,
     realWorldExample: "A restaurant waiter (Facade) — you tell the waiter your order (simple interface), and they handle the complex subsystem: passing to the kitchen, coordinating with the bar, handling billing, etc. You don't interact with the chef, bartender, or cashier directly.",
     whenToUse: [
       "You want to provide a simple interface to a complex subsystem",
@@ -511,40 +594,51 @@ new ComputerFacade().start(); // Simple one-call interface`,
       { from: "Composite", to: "Component", type: "implementation" },
       { from: "Composite", to: "Component", type: "composition", toLabel: "contains ►" },
     ],
-    codeExample: `interface FileSystemNode {
-  getName(): string;
-  getSize(): number;
+    codeExample: `import java.util.*;
+
+interface FileSystemNode {
+    String getName();
+    int getSize();
 }
 
 class File implements FileSystemNode {
-  constructor(private name: string, private size: number) {}
-  getName(): string { return this.name; }
-  getSize(): number { return this.size; }
+    private String name;
+    private int size;
+    public File(String name, int size) { this.name = name; this.size = size; }
+    public String getName() { return name; }
+    public int getSize() { return size; }
 }
 
 class Directory implements FileSystemNode {
-  private children: FileSystemNode[] = [];
+    private String name;
+    private List<FileSystemNode> children = new ArrayList<>();
 
-  constructor(private name: string) {}
+    public Directory(String name) { this.name = name; }
 
-  add(child: FileSystemNode): void { this.children.push(child); }
-  getName(): string { return this.name; }
+    public void add(FileSystemNode child) { children.add(child); }
+    public String getName() { return name; }
 
-  getSize(): number {
-    return this.children.reduce((sum, c) => sum + c.getSize(), 0);
-  }
+    public int getSize() {
+        int sum = 0;
+        for (FileSystemNode c : children) sum += c.getSize();
+        return sum;
+    }
 }
 
 // Usage
-const folder = new Directory("Downloads");
-folder.add(new File("photo.jpg", 500));
-folder.add(new File("doc.pdf", 200));
+public class Main {
+    public static void main(String[] args) {
+        Directory folder = new Directory("Downloads");
+        folder.add(new File("photo.jpg", 500));
+        folder.add(new File("doc.pdf", 200));
 
-const subFolder = new Directory("Music");
-subFolder.add(new File("song.mp3", 3000));
-folder.add(subFolder);
+        Directory subFolder = new Directory("Music");
+        subFolder.add(new File("song.mp3", 3000));
+        folder.add(subFolder);
 
-console.log(folder.getSize()); // 3700 (sum of all)`,
+        System.out.println(folder.getSize()); // 3700 (sum of all)
+    }
+}`,
     realWorldExample: "A file system — both files (Leaf) and folders (Composite) can be renamed, deleted, and have their size calculated. Operations on a folder recursively apply to all its children.",
     whenToUse: [
       "You have a tree structure with simple and complex elements",
@@ -573,42 +667,50 @@ console.log(folder.getSize()); // 3700 (sum of all)`,
       { from: "ConcreteImplementor", to: "Implementor", type: "implementation" },
     ],
     codeExample: `interface Device {
-  isEnabled(): boolean;
-  enable(): void;
-  disable(): void;
-  getVolume(): number;
-  setVolume(percent: number): void;
+    boolean isEnabled();
+    void enable();
+    void disable();
+    int getVolume();
+    void setVolume(int percent);
 }
 
 class TV implements Device {
-  private on = false; private volume = 50;
-  isEnabled(): boolean { return this.on; }
-  enable(): void { this.on = true; console.log("TV On"); }
-  disable(): void { this.on = false; console.log("TV Off"); }
-  getVolume(): number { return this.volume; }
-  setVolume(v: number): void { this.volume = v; }
+    private boolean on = false;
+    private int volume = 50;
+    public boolean isEnabled() { return on; }
+    public void enable() { on = true; System.out.println("TV On"); }
+    public void disable() { on = false; System.out.println("TV Off"); }
+    public int getVolume() { return volume; }
+    public void setVolume(int v) { volume = v; }
 }
 
 class Radio implements Device {
-  private on = false; private volume = 30;
-  isEnabled(): boolean { return this.on; }
-  enable(): void { this.on = true; console.log("Radio On"); }
-  disable(): void { this.on = false; console.log("Radio Off"); }
-  getVolume(): number { return this.volume; }
-  setVolume(v: number): void { this.volume = v; }
+    private boolean on = false;
+    private int volume = 30;
+    public boolean isEnabled() { return on; }
+    public void enable() { on = true; System.out.println("Radio On"); }
+    public void disable() { on = false; System.out.println("Radio Off"); }
+    public int getVolume() { return volume; }
+    public void setVolume(int v) { volume = v; }
 }
 
 class RemoteControl {
-  constructor(protected device: Device) {}
-  togglePower(): void {
-    this.device.isEnabled() ? this.device.disable() : this.device.enable();
-  }
-  volumeUp(): void { this.device.setVolume(this.device.getVolume() + 10); }
+    protected Device device;
+    public RemoteControl(Device device) { this.device = device; }
+    public void togglePower() {
+        if (device.isEnabled()) device.disable();
+        else device.enable();
+    }
+    public void volumeUp() { device.setVolume(device.getVolume() + 10); }
 }
 
 // Usage
-const remote = new RemoteControl(new TV());
-remote.togglePower(); // "TV On"`,
+public class Main {
+    public static void main(String[] args) {
+        RemoteControl remote = new RemoteControl(new TV());
+        remote.togglePower(); // "TV On"
+    }
+}`,
     realWorldExample: "A universal remote (Abstraction) can control different devices (Implementors) like TVs and Radios. The remote logic stays the same, while each device implements its own specifics. Both can vary independently.",
     whenToUse: [
       "You want to avoid permanent binding between abstraction and implementation",
@@ -634,41 +736,47 @@ remote.togglePower(); // "TV On"`,
       { from: "ConcreteFlyweight", to: "Flyweight", type: "implementation" },
       { from: "FlyweightFactory", to: "Flyweight", type: "dependency", toLabel: "creates/manages" },
     ],
-    codeExample: `class TreeType {
-  constructor(
-    public name: string,
-    public color: string,
-    public texture: string
-  ) {}
+    codeExample: `import java.util.*;
 
-  draw(canvas: any, x: number, y: number): void {
-    console.log("Drawing " + this.name + " at (" + x + "," + y + ")");
-  }
+class TreeType {
+    private String name, color, texture;
+    public TreeType(String name, String color, String texture) {
+        this.name = name; this.color = color; this.texture = texture;
+    }
+    public void draw(int x, int y) {
+        System.out.println("Drawing " + name + " at (" + x + "," + y + ")");
+    }
 }
 
 class TreeFactory {
-  private static treeTypes: Map<string, TreeType> = new Map();
+    private static Map<String, TreeType> treeTypes = new HashMap<>();
 
-  static getTreeType(name: string, color: string, texture: string): TreeType {
-    const key = name + "-" + color + "-" + texture;
-    if (!this.treeTypes.has(key)) {
-      this.treeTypes.set(key, new TreeType(name, color, texture));
+    public static TreeType getTreeType(String name, String color, String texture) {
+        String key = name + "-" + color + "-" + texture;
+        if (!treeTypes.containsKey(key)) {
+            treeTypes.put(key, new TreeType(name, color, texture));
+        }
+        return treeTypes.get(key);
     }
-    return this.treeTypes.get(key)!;
-  }
 }
 
 class Tree {
-  constructor(private x: number, private y: number, private type: TreeType) {}
-  draw(canvas: any): void { this.type.draw(canvas, this.x, this.y); }
+    private int x, y;
+    private TreeType type;
+    public Tree(int x, int y, TreeType type) { this.x = x; this.y = y; this.type = type; }
+    public void draw() { type.draw(x, y); }
 }
 
-// Usage: 10000 trees but only 3 TreeType objects
-const forest: Tree[] = [];
-for (let i = 0; i < 5000; i++) {
-  forest.push(new Tree(i, i, TreeFactory.getTreeType("Oak", "Green", "Rough")));
-}
-// Only 2 TreeType instances for 10000 trees!`,
+// Usage: 10000 trees but only few TreeType objects
+public class Main {
+    public static void main(String[] args) {
+        List<Tree> forest = new ArrayList<>();
+        for (int i = 0; i < 5000; i++) {
+            forest.add(new Tree(i, i, TreeFactory.getTreeType("Oak", "Green", "Rough")));
+        }
+        // Only few TreeType instances for 5000 trees!
+    }
+}`,
     realWorldExample: "A library — books with the same title/author/ISBN (intrinsic state) are the same type, but each copy (extrinsic state: shelf location, borrower) differs. The library stores the book metadata once and tracks each copy separately.",
     whenToUse: [
       "Your application uses a large number of objects",
@@ -700,48 +808,52 @@ for (let i = 0; i < 5000; i++) {
       { from: "ConcreteObserver", to: "Observer", type: "implementation" },
       { from: "Subject", to: "Observer", type: "dependency", toLabel: "notifies" },
     ],
-    codeExample: `interface Observer {
-  update(temperature: number): void;
+    codeExample: `import java.util.*;
+
+interface Observer {
+    void update(int temperature);
 }
 
 class WeatherStation {
-  private observers: Observer[] = [];
-  private temperature: number = 0;
+    private List<Observer> observers = new ArrayList<>();
+    private int temperature = 0;
 
-  attach(observer: Observer): void { this.observers.push(observer); }
-  detach(observer: Observer): void {
-    this.observers = this.observers.filter(o => o !== observer);
-  }
+    public void attach(Observer observer) { observers.add(observer); }
+    public void detach(Observer observer) { observers.remove(observer); }
 
-  setTemperature(temp: number): void {
-    this.temperature = temp;
-    this.notifyObservers();
-  }
-
-  private notifyObservers(): void {
-    for (const observer of this.observers) {
-      observer.update(this.temperature);
+    public void setTemperature(int temp) {
+        this.temperature = temp;
+        notifyObservers();
     }
-  }
+
+    private void notifyObservers() {
+        for (Observer observer : observers) {
+            observer.update(temperature);
+        }
+    }
 }
 
 class PhoneDisplay implements Observer {
-  update(temp: number): void {
-    console.log("Phone Display: Temperature = " + temp + "°C");
-  }
+    public void update(int temp) {
+        System.out.println("Phone Display: Temperature = " + temp + "°C");
+    }
 }
 
 class WindowDisplay implements Observer {
-  update(temp: number): void {
-    console.log("Window Display: Temperature = " + temp + "°C");
-  }
+    public void update(int temp) {
+        System.out.println("Window Display: Temperature = " + temp + "°C");
+    }
 }
 
 // Usage
-const station = new WeatherStation();
-station.attach(new PhoneDisplay());
-station.attach(new WindowDisplay());
-station.setTemperature(25); // Both displays get notified`,
+public class Main {
+    public static void main(String[] args) {
+        WeatherStation station = new WeatherStation();
+        station.attach(new PhoneDisplay());
+        station.attach(new WindowDisplay());
+        station.setTemperature(25); // Both displays get notified
+    }
+}`,
     realWorldExample: "A YouTube channel (Subject) — subscribers (Observers) get notified when a new video is uploaded. Subscribers can subscribe/unsubscribe at any time without affecting the channel.",
     whenToUse: [
       "Changes to one object require changing others, and you don't know how many",
@@ -769,44 +881,51 @@ station.setTemperature(25); // Both displays get notified`,
       { from: "ConcreteStrategyB", to: "Strategy", type: "implementation" },
       { from: "Context", to: "Strategy", type: "composition", toLabel: "uses" },
     ],
-    codeExample: `interface PaymentStrategy {
-  pay(amount: number): void;
+    codeExample: `import java.util.*;
+
+interface PaymentStrategy {
+    void pay(int amount);
 }
 
 class CreditCardPayment implements PaymentStrategy {
-  constructor(private name: string, private cardNo: string) {}
-  pay(amount: number): void {
-    console.log("Paid $" + amount + " via Credit Card " + this.cardNo);
-  }
+    private String name, cardNo;
+    public CreditCardPayment(String name, String cardNo) { this.name = name; this.cardNo = cardNo; }
+    public void pay(int amount) {
+        System.out.println("Paid $" + amount + " via Credit Card " + cardNo);
+    }
 }
 
 class PayPalPayment implements PaymentStrategy {
-  constructor(private email: string) {}
-  pay(amount: number): void {
-    console.log("Paid $" + amount + " via PayPal (" + this.email + ")");
-  }
+    private String email;
+    public PayPalPayment(String email) { this.email = email; }
+    public void pay(int amount) {
+        System.out.println("Paid $" + amount + " via PayPal (" + email + ")");
+    }
 }
 
 class ShoppingCart {
-  private items: { price: number }[] = [];
-  private paymentStrategy: PaymentStrategy | null = null;
+    private List<Integer> items = new ArrayList<>();
+    private PaymentStrategy paymentStrategy;
 
-  addItem(price: number): void { this.items.push({ price }); }
-  setPaymentStrategy(strategy: PaymentStrategy): void {
-    this.paymentStrategy = strategy;
-  }
+    public void addItem(int price) { items.add(price); }
+    public void setPaymentStrategy(PaymentStrategy strategy) { this.paymentStrategy = strategy; }
 
-  checkout(): void {
-    const total = this.items.reduce((sum, i) => sum + i.price, 0);
-    this.paymentStrategy?.pay(total);
-  }
+    public void checkout() {
+        int total = 0;
+        for (int price : items) total += price;
+        if (paymentStrategy != null) paymentStrategy.pay(total);
+    }
 }
 
 // Usage
-const cart = new ShoppingCart();
-cart.addItem(50); cart.addItem(30);
-cart.setPaymentStrategy(new PayPalPayment("user@example.com"));
-cart.checkout(); // "Paid $80 via PayPal"`,
+public class Main {
+    public static void main(String[] args) {
+        ShoppingCart cart = new ShoppingCart();
+        cart.addItem(50); cart.addItem(30);
+        cart.setPaymentStrategy(new PayPalPayment("user@example.com"));
+        cart.checkout(); // "Paid $80 via PayPal"
+    }
+}`,
     realWorldExample: "A GPS navigation app — you can switch between strategies: shortest route, fastest route, scenic route. Each algorithm is encapsulated separately, and you can switch at runtime without changing the navigation system.",
     whenToUse: [
       "You have many related classes that differ only in behavior",
@@ -834,48 +953,57 @@ cart.checkout(); // "Paid $80 via PayPal"`,
       { from: "ConcreteCommand", to: "Receiver", type: "composition", toLabel: "calls" },
       { from: "Invoker", to: "Command", type: "composition", toLabel: "stores" },
     ],
-    codeExample: `interface Command {
-  execute(): void;
-  undo(): void;
+    codeExample: `import java.util.*;
+
+interface Command {
+    void execute();
+    void undo();
 }
 
 class Light {
-  on(): void { console.log("Light ON"); }
-  off(): void { console.log("Light OFF"); }
+    public void on() { System.out.println("Light ON"); }
+    public void off() { System.out.println("Light OFF"); }
 }
 
 class LightOnCommand implements Command {
-  constructor(private light: Light) {}
-  execute(): void { this.light.on(); }
-  undo(): void { this.light.off(); }
+    private Light light;
+    public LightOnCommand(Light light) { this.light = light; }
+    public void execute() { light.on(); }
+    public void undo() { light.off(); }
 }
 
 class LightOffCommand implements Command {
-  constructor(private light: Light) {}
-  execute(): void { this.light.off(); }
-  undo(): void { this.light.on(); }
+    private Light light;
+    public LightOffCommand(Light light) { this.light = light; }
+    public void execute() { light.off(); }
+    public void undo() { light.on(); }
 }
 
 class RemoteControl {
-  private history: Command[] = [];
+    private Stack<Command> history = new Stack<>();
 
-  submit(command: Command): void {
-    command.execute();
-    this.history.push(command);
-  }
+    public void submit(Command command) {
+        command.execute();
+        history.push(command);
+    }
 
-  undo(): void {
-    const command = this.history.pop();
-    command?.undo();
-  }
+    public void undo() {
+        if (!history.isEmpty()) {
+            history.pop().undo();
+        }
+    }
 }
 
 // Usage
-const remote = new RemoteControl();
-const light = new Light();
-remote.submit(new LightOnCommand(light)); // Light ON
-remote.submit(new LightOffCommand(light)); // Light OFF
-remote.undo(); // Light ON (undoes last command)`,
+public class Main {
+    public static void main(String[] args) {
+        RemoteControl remote = new RemoteControl();
+        Light light = new Light();
+        remote.submit(new LightOnCommand(light)); // Light ON
+        remote.submit(new LightOffCommand(light)); // Light OFF
+        remote.undo(); // Light ON (undoes last command)
+    }
+}`,
     realWorldExample: "A restaurant — you (Client) give the waiter (Invoker) your order (Command). The waiter writes it down and gives it to the chef (Receiver). The order can be queued, logged, or even canceled (undo).",
     whenToUse: [
       "You need to parameterize objects with operations",
@@ -1038,31 +1166,38 @@ new CSVProcessor().process();
       { from: "ConcreteIterator", to: "ConcreteCollection", type: "dependency", toLabel: "traverses" },
     ],
     codeExample: `interface Iterator<T> {
-  hasNext(): boolean;
-  next(): T;
+    boolean hasNext();
+    T next();
 }
 
 class ArrayIterator<T> implements Iterator<T> {
-  private index = 0;
-  constructor(private collection: T[]) {}
-  hasNext(): boolean { return this.index < this.collection.length; }
-  next(): T { return this.collection[this.index++]; }
+    private int index = 0;
+    private T[] collection;
+    public ArrayIterator(T[] collection) { this.collection = collection; }
+    public boolean hasNext() { return index < collection.length; }
+    public T next() { return collection[index++]; }
 }
 
 interface Collection<T> {
-  createIterator(): Iterator<T>;
+    Iterator<T> createIterator();
 }
 
 class ListCollection<T> implements Collection<T> {
-  constructor(private items: T[]) {}
-  createIterator(): Iterator<T> { return new ArrayIterator(this.items); }
+    private T[] items;
+    public ListCollection(T[] items) { this.items = items; }
+    public Iterator<T> createIterator() { return new ArrayIterator<>(items); }
 }
 
-// Usage (JavaScript already has iterators built-in)
-const collection = new ListCollection([1, 2, 3]);
-const iterator = collection.createIterator();
-while (iterator.hasNext()) {
-  console.log(iterator.next()); // 1, 2, 3
+// Usage
+public class Main {
+    public static void main(String[] args) {
+        String[] data = {"A", "B", "C"};
+        Collection<String> collection = new ListCollection<>(data);
+        Iterator<String> iterator = collection.createIterator();
+        while (iterator.hasNext()) {
+            System.out.println(iterator.next()); // A, B, C
+        }
+    }
 }`,
     realWorldExample: "A carousel slide show — you can go next/previous through slides without knowing whether they're stored as an array, linked list, or database records. The remote control (iterator) abstracts traversal.",
     whenToUse: [
@@ -1092,50 +1227,57 @@ while (iterator.hasNext()) {
       { from: "Component", to: "Mediator", type: "dependency", toLabel: "notifies" },
     ],
     codeExample: `interface Mediator {
-  notify(sender: Component, event: string): void;
+    void notify(Component sender, String event);
 }
 
 abstract class Component {
-  constructor(protected mediator: Mediator) {}
+    protected Mediator mediator;
+    public Component(Mediator mediator) { this.mediator = mediator; }
 }
 
 class Button extends Component {
-  click(): void {
-    console.log("Button clicked");
-    this.mediator.notify(this, "click");
-  }
+    public Button(Mediator mediator) { super(mediator); }
+    public void click() {
+        System.out.println("Button clicked");
+        mediator.notify(this, "click");
+    }
 }
 
 class TextBox extends Component {
-  input(): void {
-    console.log("Text changed");
-  }
+    public TextBox(Mediator mediator) { super(mediator); }
+    public void input() {
+        System.out.println("Text changed");
+    }
 }
 
 class AuthenticationDialog implements Mediator {
-  private title: TextBox;
-  private loginBtn: Button;
-  private registerBtn: Button;
+    private TextBox title;
+    private Button loginBtn;
+    private Button registerBtn;
 
-  constructor() {
-    this.title = new TextBox(this);
-    this.loginBtn = new Button(this);
-    this.registerBtn = new Button(this);
-  }
+    public AuthenticationDialog() {
+        this.title = new TextBox(this);
+        this.loginBtn = new Button(this);
+        this.registerBtn = new Button(this);
+    }
 
-  notify(sender: Component, event: string): void {
-    if (sender === this.loginBtn && event === "click") {
-      console.log("Show login form");
+    public void notify(Component sender, String event) {
+        if (sender == loginBtn && event.equals("click")) {
+            System.out.println("Show login form");
+        }
+        if (sender == registerBtn && event.equals("click")) {
+            System.out.println("Show registration form");
+        }
     }
-    if (sender === this.registerBtn && event === "click") {
-      console.log("Show registration form");
-    }
-  }
 }
 
 // Usage
-const dialog = new AuthenticationDialog();
-// Components communicate only through the mediator`,
+public class Main {
+    public static void main(String[] args) {
+        AuthenticationDialog dialog = new AuthenticationDialog();
+        // Components communicate only through the mediator
+    }
+}`,
     realWorldExample: "An air traffic control tower (Mediator) at an airport — planes (Components) don't talk to each other directly. They communicate through the tower, which coordinates landing/takeoff schedules, preventing collisions.",
     whenToUse: [
       "Many objects communicate in complex, hard-to-maintain ways",
@@ -1165,49 +1307,61 @@ const dialog = new AuthenticationDialog();
       { from: "BaseHandler", to: "Handler", type: "dependency", toLabel: "next" },
     ],
     codeExample: `abstract class Handler {
-  private next: Handler | null = null;
-  setNext(handler: Handler): Handler { this.next = handler; return handler; }
-  handle(request: string): void {
-    if (this.next) this.next.handle(request);
-  }
+    private Handler next;
+
+    public Handler setNext(Handler handler) {
+        this.next = handler;
+        return handler;
+    }
+
+    public void handle(String request) {
+        if (next != null) next.handle(request);
+    }
+
+    protected Handler getNext() { return next; }
 }
 
 class BasicSupport extends Handler {
-  handle(request: string): void {
-    if (request === "password reset") {
-      console.log("Basic Support: Handled password reset");
-    } else {
-      console.log("Basic Support: Passing to supervisor...");
-      super.handle(request);
+    public void handle(String request) {
+        if (request.equals("password reset")) {
+            System.out.println("Basic Support: Handled password reset");
+        } else {
+            System.out.println("Basic Support: Passing to supervisor...");
+            super.handle(request);
+        }
     }
-  }
 }
 
 class Supervisor extends Handler {
-  handle(request: string): void {
-    if (request === "refund") {
-      console.log("Supervisor: Handled refund request");
-    } else {
-      console.log("Supervisor: Passing to manager...");
-      super.handle(request);
+    public void handle(String request) {
+        if (request.equals("refund")) {
+            System.out.println("Supervisor: Handled refund request");
+        } else {
+            System.out.println("Supervisor: Passing to manager...");
+            super.handle(request);
+        }
     }
-  }
 }
 
 class Manager extends Handler {
-  handle(request: string): void {
-    if (request === "complaint") {
-      console.log("Manager: Handled complaint");
-    } else {
-      console.log("Manager: Cannot handle " + request);
+    public void handle(String request) {
+        if (request.equals("complaint")) {
+            System.out.println("Manager: Handled complaint");
+        } else {
+            System.out.println("Manager: Cannot handle " + request);
+        }
     }
-  }
 }
 
 // Usage: Chain Basic → Supervisor → Manager
-const basic = new BasicSupport();
-basic.setNext(new Supervisor()).setNext(new Manager());
-basic.handle("refund"); // "Basic Support: Passing to supervisor..." → "Supervisor: Handled refund request"`,
+public class Main {
+    public static void main(String[] args) {
+        Handler basic = new BasicSupport();
+        basic.setNext(new Supervisor()).setNext(new Manager());
+        basic.handle("refund");
+        // "Basic Support: Passing to supervisor..." → "Supervisor: Handled refund request"
+    }
+}`,
     realWorldExample: "A customer support ticket system — a simple request (password reset) is handled by Level-1 support. If it's complex, it escalates to Level-2, then Level-3, and so on. Each level decides if they can handle it or pass it up.",
     whenToUse: [
       "More than one handler can process a request",

@@ -186,7 +186,7 @@ export const SystemDesignWorkspace: React.FC<SystemDesignWorkspaceProps> = ({ pr
           {activeTab === "code" && (
             <div className="bg-slate-900/40 border border-slate-800/80 rounded-xl p-4">
               <h3 className="text-xs font-bold text-teal-400 uppercase tracking-widest font-mono mb-3">
-                TypeScript/JavaScript Implementation
+                Java Implementation
               </h3>
               <div className="bg-slate-950 rounded-lg p-4 overflow-x-auto max-h-[500px] border border-slate-900">
                 <pre className="text-xs font-mono text-teal-300 leading-relaxed select-all whitespace-pre-wrap">
