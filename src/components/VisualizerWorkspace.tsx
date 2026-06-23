@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Play, Pause, SkipBack, SkipForward, RotateCcw, AlertTriangle, BookOpen, Layers, CheckCircle, Info, Code, PlayCircle, Settings, HelpCircle } from "lucide-react";
+import { Play, Pause, SkipBack, SkipForward, RotateCcw, AlertTriangle, BookOpen, Layers, CheckCircle, Info, Code, PlayCircle, Settings, HelpCircle, ArrowLeft } from "lucide-react";
 import { Problem, TraceStep } from "../types";
 import { getInteractiveTrace } from "../data/striverData";
 import { ArrayVisualizer } from "./ArrayVisualizer";
@@ -11,12 +11,14 @@ interface VisualizerWorkspaceProps {
   problem: Problem;
   isSolved: boolean;
   onToggleSolved: (id: string, event: React.MouseEvent) => void;
+  onBack?: () => void;
 }
 
 export const VisualizerWorkspace: React.FC<VisualizerWorkspaceProps> = ({
   problem,
   isSolved,
   onToggleSolved,
+  onBack,
 }) => {
   // Input parameters
   const [inputValue, setInputValue] = useState(problem.defaultInput.value);
@@ -175,7 +177,18 @@ export const VisualizerWorkspace: React.FC<VisualizerWorkspaceProps> = ({
         
         {/* Title and metadata bar */}
         <div className="bg-slate-900/50 p-4 rounded-xl border border-slate-800/80 backdrop-blur-md flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
+          <div className="flex items-center gap-3">
+            {/* Back Button */}
+            {onBack && (
+              <button
+                onClick={onBack}
+                className="p-2 rounded-lg bg-slate-800/60 hover:bg-slate-700/60 border border-slate-700/50 text-slate-400 hover:text-cyan-400 transition-all duration-200 shrink-0"
+                title="Back to SDE Sheet"
+              >
+                <ArrowLeft className="w-4 h-4" />
+              </button>
+            )}
+            <div>
             <div className="flex items-center gap-2">
               <span className="bg-cyan-950 text-cyan-400 border border-cyan-800/40 font-mono text-[9px] px-2 py-0.5 rounded font-bold uppercase tracking-wider">
                 Striver SDE Companion
@@ -190,6 +203,7 @@ export const VisualizerWorkspace: React.FC<VisualizerWorkspaceProps> = ({
             <h2 id="workspace-problem-title" className="text-lg font-bold text-slate-100 mt-1.5 flex items-center gap-2">
               {problem.title}
             </h2>
+          </div>
           </div>
 
           <button

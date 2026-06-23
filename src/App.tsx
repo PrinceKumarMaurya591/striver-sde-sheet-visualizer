@@ -122,6 +122,7 @@ export default function App() {
             problem={activeProblem}
             isSolved={!!solvedProblems[activeProblem.id]}
             onToggleSolved={handleToggleSolved}
+            onBack={() => setActiveProblemId("sort-colors")}
           />
         ) : (
           /* Fallback view, if none select */

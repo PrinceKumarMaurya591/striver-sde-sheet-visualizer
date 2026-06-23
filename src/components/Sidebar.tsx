@@ -112,7 +112,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <span>LLD — Design Patterns</span>
             <ChevronRight className={`w-3 h-3 ml-auto text-slate-600 transition-transform duration-200 ${lldOpen ? 'rotate-90' : ''}`} />
           </button>
-          <div className={`${lldOpen ? '' : 'hidden'} pl-5 space-y-0.5`}>
+          <div className={`overflow-hidden transition-all duration-300 ease-in-out ${
+            lldOpen ? 'max-h-[600px] opacity-100' : 'max-h-0 opacity-0'
+          }`}>
+            <div className="pl-5 space-y-0.5 pt-1">
             {([
               { label: "Creational (5)", category: "creational", color: "text-emerald-400" },
               { label: "Structural (7)", category: "structural", color: "text-amber-400" },
@@ -140,6 +143,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   ))}
               </div>
             ))}
+            </div>
           </div>
         </div>
 
@@ -153,7 +157,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <span>HLD — System Architecture</span>
             <ChevronRight className={`w-3 h-3 ml-auto text-slate-600 transition-transform duration-200 ${hldOpen ? 'rotate-90' : ''}`} />
           </button>
-          <div className={`${hldOpen ? '' : 'hidden'} pl-5 space-y-0.5`}>
+          <div className={`overflow-hidden transition-all duration-300 ease-in-out ${
+            hldOpen ? 'max-h-[600px] opacity-100' : 'max-h-0 opacity-0'
+          }`}>
+            <div className="pl-5 space-y-0.5 pt-1">
             {HLD_PROBLEMS.map(p => (
               <button
                 key={p.id}
@@ -168,6 +175,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 <span className="truncate">{p.title}</span>
               </button>
             ))}
+            </div>
           </div>
         </div>
       </div>
