@@ -47,11 +47,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <Brain className="w-6 h-6 stroke-[2]" />
           </div>
           <div>
-            <h1 className="text-lg font-black tracking-tight bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
-              STRIVER SDE
+            <h1 className="text-lg font-black tracking-tight">
+              <span className="text-gradient-cyan">STRIVER</span> <span className="text-slate-100">SDE</span>
             </h1>
-            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest font-mono">
-              ALGORITHM VISUALIZER
+            <span className="text-[10px] font-bold text-cyan-400/70 uppercase tracking-[0.15em] font-mono">
+              Java Algorithm Visualizer
             </span>
           </div>
         </div>
@@ -280,9 +280,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
       </div>
 
       {/* Footer Branding Credit */}
-      <div className="p-4 border-t border-slate-800 bg-slate-950 text-center text-[10px] font-mono text-slate-500 font-bold flex items-center justify-center gap-1.5">
+      <div className="p-4 border-t border-slate-800/60 bg-slate-950/80 text-center text-[10px] font-mono text-slate-500 font-bold flex items-center justify-center gap-1.5">
         <Layers className="w-3.5 h-3.5 text-cyan-500" />
-        <span>STRIVER SDE COMPANION</span>
+        <span>STRIVER <span className="text-cyan-400/60">JAVA</span> COMPANION</span>
       </div>
     </div>
   );

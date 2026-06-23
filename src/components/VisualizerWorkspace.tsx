@@ -504,11 +504,11 @@ export const VisualizerWorkspace: React.FC<VisualizerWorkspaceProps> = ({
         {/* Code display window */}
         <div className="flex-1 overflow-y-auto p-4 select-all bg-slate-950">
           <div className="flex items-center justify-between text-[10px] font-bold font-mono text-slate-500 uppercase tracking-widest border-b border-slate-900 pb-2 mb-3">
-            <span>JavaScript Implementation ({activeCodeTab === "optimal" ? "Timeline Highlight" : "Static template"})</span>
+            <span>Java Implementation ({activeCodeTab === "optimal" ? "Timeline Highlight" : "Static template"})</span>
             <Code className="w-3.5 h-3.5 text-slate-500" />
           </div>
 
-          <pre className="text-xs font-mono leading-relaxed select-text text-teal-300">
+          <pre className="text-xs font-mono leading-relaxed select-text text-emerald-300">
             {activeCodeTab === "optimal" ? (
               problem.optimal.code.split("\n").map((line, idx) => {
                 const lineNum = idx + 1;

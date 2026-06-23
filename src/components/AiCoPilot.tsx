@@ -6,17 +6,21 @@ import { ArrayVisualizer } from "./ArrayVisualizer";
 export const AiCoPilot: React.FC = () => {
   const [problemTitle, setProblemTitle] = useState("Find Duplicates in Array");
   const [codeSnippet, setCodeSnippet] = useState(
-`function findDuplicates(nums) {
-  const seen = new Set();
-  const duplicates = [];
-  for (let i = 0; i < nums.length; i++) {
-    if (seen.has(nums[i])) {
-      duplicates.push(nums[i]);
-    } else {
-      seen.add(nums[i]);
+`import java.util.*;
+
+public class Solution {
+    public static List<Integer> findDuplicates(int[] nums) {
+        Set<Integer> seen = new HashSet<>();
+        List<Integer> duplicates = new ArrayList<>();
+        for (int i = 0; i < nums.length; i++) {
+            if (seen.contains(nums[i])) {
+                duplicates.add(nums[i]);
+            } else {
+                seen.add(nums[i]);
+            }
+        }
+        return duplicates;
     }
-  }
-  return duplicates;
 }`);
   const [customInput, setCustomInput] = useState("2,4,4,1,8,2,9");
   const [loading, setLoading] = useState(false);
@@ -36,47 +40,55 @@ export const AiCoPilot: React.FC = () => {
     {
       title: "Find Duplicates in Array",
       input: "2,4,4,1,8,2,9",
-      code: `function findDuplicates(nums) {
-  const seen = new Set();
-  const duplicates = [];
-  for (let i = 0; i < nums.length; i++) {
-    if (seen.has(nums[i])) {
-      duplicates.push(nums[i]);
-    } else {
-      seen.add(nums[i]);
+      code: `import java.util.*;
+
+public class Solution {
+    public static List<Integer> findDuplicates(int[] nums) {
+        Set<Integer> seen = new HashSet<>();
+        List<Integer> duplicates = new ArrayList<>();
+        for (int i = 0; i < nums.length; i++) {
+            if (seen.contains(nums[i])) {
+                duplicates.add(nums[i]);
+            } else {
+                seen.add(nums[i]);
+            }
+        }
+        return duplicates;
     }
-  }
-  return duplicates;
 }`
     },
     {
       title: "Move Zeroes to End",
       input: "0,1,0,3,12",
-      code: `function moveZeroes(nums) {
-  let insertPos = 0;
-  for (let i = 0; i < nums.length; i++) {
-    if (nums[i] !== 0) {
-      // Swap elements
-      let temp = nums[insertPos];
-      nums[insertPos] = nums[i];
-      nums[i] = temp;
-      insertPos++;
+      code: `public class Solution {
+    public static void moveZeroes(int[] nums) {
+        int insertPos = 0;
+        for (int i = 0; i < nums.length; i++) {
+            if (nums[i] != 0) {
+                // Swap elements
+                int temp = nums[insertPos];
+                nums[insertPos] = nums[i];
+                nums[i] = temp;
+                insertPos++;
+            }
+        }
     }
-  }
 }`
     },
     {
       title: "Find Majority Element (> N/2)",
       input: "2,2,1,1,1,2,2",
-      code: `function majorityElement(nums) {
-  // Boyer-Moore Voting Algorithm
-  let candidate = null;
-  let count = 0;
-  for (let i = 0; i < nums.length; i++) {
-    if (count === 0) candidate = nums[i];
-    count += (nums[i] === candidate) ? 1 : -1;
-  }
-  return candidate;
+      code: `public class Solution {
+    // Boyer-Moore Voting Algorithm
+    public static int majorityElement(int[] nums) {
+        int candidate = 0;
+        int count = 0;
+        for (int i = 0; i < nums.length; i++) {
+            if (count == 0) candidate = nums[i];
+            count += (nums[i] == candidate) ? 1 : -1;
+        }
+        return candidate;
+    }
 }`
     }
   ];
@@ -247,7 +259,7 @@ export const AiCoPilot: React.FC = () => {
             {/* Code editor snippet block */}
             <div>
               <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5 font-mono flex items-center justify-between">
-                <span>Code implementation (JavaScript)</span>
+                <span>Code implementation (Java)</span>
                 <Code2 className="w-3.5 h-3.5 text-slate-500" />
               </label>
               <textarea

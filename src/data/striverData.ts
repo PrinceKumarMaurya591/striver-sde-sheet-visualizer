@@ -14,33 +14,41 @@ export const STRIVER_PROBLEMS: Problem[] = [
       description: "Sort the array using standard sorting algorithms like Merge Sort or Quick Sort, which takes O(N log N) time.",
       timeComplexity: "O(N log N)",
       spaceComplexity: "O(1)",
-      code: `function sortColors(nums) {\n  nums.sort((a, b) => a - b);\n}`
+      code: `import java.util.Arrays;
+
+public class Solution {
+    public static void sortColors(int[] nums) {
+        Arrays.sort(nums);
+    }
+}`
     },
     optimal: {
       description: "Keep three pointers: low, mid, high. Swap elements accordingly on checking value at mid pointer.",
       timeComplexity: "O(N)",
       spaceComplexity: "O(1)",
-      code: `function sortColors(nums) {
-  let low = 0;
-  let mid = 0;
-  let high = nums.length - 1;
+      code: `public class Solution {
+    public static void sortColors(int[] nums) {
+        int low = 0;
+        int mid = 0;
+        int high = nums.length - 1;
 
-  while (mid <= high) {
-    if (nums[mid] === 0) {
-      const temp = nums[low];
-      nums[low] = nums[mid];
-      nums[mid] = temp;
-      low++;
-      mid++;
-    } else if (nums[mid] === 1) {
-      mid++;
-    } else {
-      const temp = nums[high];
-      nums[high] = nums[mid];
-      nums[mid] = temp;
-      high--;
+        while (mid <= high) {
+            if (nums[mid] == 0) {
+                int temp = nums[low];
+                nums[low] = nums[mid];
+                nums[mid] = temp;
+                low++;
+                mid++;
+            } else if (nums[mid] == 1) {
+                mid++;
+            } else {
+                int temp = nums[high];
+                nums[high] = nums[mid];
+                nums[mid] = temp;
+                high--;
+            }
+        }
     }
-  }
 }`
     },
     defaultInput: {
@@ -59,26 +67,40 @@ export const STRIVER_PROBLEMS: Problem[] = [
       description: "Find sum of all possible subarrays using nested loops and return the maximum.",
       timeComplexity: "O(N^2)",
       spaceComplexity: "O(1)",
-      code: `function maxSubArray(nums) {\n  let maxSoFar = -Infinity;\n  for(let i=0; i<nums.length; i++) {\n    let currentSum = 0;\n    for(let j=i; j<nums.length; j++) {\n      currentSum += nums[j];\n      maxSoFar = Math.max(maxSoFar, currentSum);\n    }\n  }\n  return maxSoFar;\n}`
+      code: `public class Solution {
+    public static int maxSubArray(int[] nums) {
+        int maxSoFar = Integer.MIN_VALUE;
+        for (int i = 0; i < nums.length; i++) {
+            int currentSum = 0;
+            for (int j = i; j < nums.length; j++) {
+                currentSum += nums[j];
+                maxSoFar = Math.max(maxSoFar, currentSum);
+            }
+        }
+        return maxSoFar;
+    }
+}`
     },
     optimal: {
       description: "Iterate through elements, carrying a cumulative sum. If sum drops below zero, reset it back to zero.",
       timeComplexity: "O(N)",
       spaceComplexity: "O(1)",
-      code: `function maxSubArray(nums) {
-  let maxSoFar = nums[0];
-  let currentSum = 0;
+      code: `public class Solution {
+    public static int maxSubArray(int[] nums) {
+        int maxSoFar = nums[0];
+        int currentSum = 0;
 
-  for (let i = 0; i < nums.length; i++) {
-    currentSum += nums[i];
-    if (currentSum > maxSoFar) {
-      maxSoFar = currentSum;
+        for (int i = 0; i < nums.length; i++) {
+            currentSum += nums[i];
+            if (currentSum > maxSoFar) {
+                maxSoFar = currentSum;
+            }
+            if (currentSum < 0) {
+                currentSum = 0;
+            }
+        }
+        return maxSoFar;
     }
-    if (currentSum < 0) {
-      currentSum = 0;
-    }
-  }
-  return maxSoFar;
 }`
     },
     defaultInput: {
@@ -97,35 +119,60 @@ export const STRIVER_PROBLEMS: Problem[] = [
       description: "Use secondary rows and cols status arrays of sizes M and N initialized to check zero coordinates.",
       timeComplexity: "O(M * N)",
       spaceComplexity: "O(M + N)",
-      code: `function setZeroes(matrix) {\n  const m = matrix.length; const n = matrix[0].length;\n  const rows = new Array(m).fill(false); const cols = new Array(n).fill(false);\n  // Mark arrays & then fill zeroes\n}`
+      code: `public class Solution {
+    public static void setZeroes(int[][] matrix) {
+        int m = matrix.length;
+        int n = matrix[0].length;
+        boolean[] rows = new boolean[m];
+        boolean[] cols = new boolean[n];
+        // Mark arrays & then fill zeroes
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (matrix[i][j] == 0) {
+                    rows[i] = true;
+                    cols[j] = true;
+                }
+            }
+        }
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (rows[i] || cols[j]) {
+                    matrix[i][j] = 0;
+                }
+            }
+        }
+    }
+}`
     },
     optimal: {
       description: "Perform scan of elements and set flags in first row/col indicator slots. Zero out cells backwards.",
       timeComplexity: "O(M * N)",
       spaceComplexity: "O(1)",
-      code: `function setZeroes(matrix) {
-  let col0 = 1;
-  const rows = matrix.length;
-  const cols = matrix[0].length;
+      code: `public class Solution {
+    public static void setZeroes(int[][] matrix) {
+        int col0 = 1;
+        int rows = matrix.length;
+        int cols = matrix[0].length;
 
-  for (let i = 0; i < rows; i++) {
-    if (matrix[i][0] === 0) col0 = 0;
-    for (let j = 1; j < cols; j++) {
-      if (matrix[i][j] === 0) {
-        matrix[i][0] = 0;
-        matrix[0][j] = 0;
-      }
-    }
-  }
+        for (int i = 0; i < rows; i++) {
+            if (matrix[i][0] == 0) col0 = 0;
+            for (int j = 1; j < cols; j++) {
+                if (matrix[i][j] == 0) {
+                    matrix[i][0] = 0;
+                    matrix[0][j] = 0;
+                }
+            }
+        }
 
-  for (let i = rows - 1; i >= 0; i--) {
-    for (let j = cols - 1; j >= 1; j--) {
-      if (matrix[i][0] === 0 || matrix[0][j] === 0) {
-        matrix[i][j] = 0;
-      }
+        for (int i = rows - 1; i >= 0; i--) {
+            for (int j = cols - 1; j >= 1; j--) {
+                if (matrix[i][0] == 0 || matrix[0][j] == 0) {
+                    matrix[i][j] = 0;
+                }
+            }
+            if (col0 == 0) matrix[i][0] = 0;
+        }
     }
-    if (col0 === 0) matrix[i][0] = 0;
-  }
 }`
     },
     defaultInput: {
@@ -144,22 +191,35 @@ export const STRIVER_PROBLEMS: Problem[] = [
       description: "Use permutation combinations nCr coefficient loops to calculate each cell from scratch.",
       timeComplexity: "O(N^3)",
       spaceComplexity: "O(1)",
-      code: `function pascal(n) { /* Compute each coordinate using factorial nCr */ }`
+      code: `public class Solution {
+    public static List<List<Integer>> pascal(int n) {
+        // Compute each coordinate using factorial nCr
+        return null;
+    }
+}`
     },
     optimal: {
       description: "Initialize row arrays and dynamically compute adjacent cell combinations in-place sequentially.",
       timeComplexity: "O(N^2)",
       spaceComplexity: "O(N^2)",
-      code: `function generatePascal(numRows) {
-  const triangle = [];
-  for (let i = 0; i < numRows; i++) {
-    const row = new Array(i + 1).fill(1);
-    for (let j = 1; j < i; j++) {
-      row[j] = triangle[i - 1][j - 1] + triangle[i - 1][j];
+      code: `import java.util.*;
+
+public class Solution {
+    public static List<List<Integer>> generatePascal(int numRows) {
+        List<List<Integer>> triangle = new ArrayList<>();
+        for (int i = 0; i < numRows; i++) {
+            List<Integer> row = new ArrayList<>();
+            for (int j = 0; j <= i; j++) {
+                if (j == 0 || j == i) {
+                    row.add(1);
+                } else {
+                    row.add(triangle.get(i - 1).get(j - 1) + triangle.get(i - 1).get(j));
+                }
+            }
+            triangle.add(row);
+        }
+        return triangle;
     }
-    triangle.push(row);
-  }
-  return triangle;
 }`
     },
     defaultInput: {
@@ -184,15 +244,27 @@ export const STRIVER_PROBLEMS: Problem[] = [
       description: "Find break point index from right. Swap with next larger number element, then reverse right suffix.",
       timeComplexity: "O(N)",
       spaceComplexity: "O(1)",
-      code: `function nextPermutation(nums) {
-  let i = nums.length - 2;
-  while (i >= 0 && nums[i] >= nums[i + 1]) i--;
-  if (i >= 0) {
-    let j = nums.length - 1;
-    while (nums[j] <= nums[i]) j--;
-    swap(nums, i, j);
-  }
-  reverse(nums, i + 1);
+      code: `public class Solution {
+    public static void nextPermutation(int[] nums) {
+        int i = nums.length - 2;
+        while (i >= 0 && nums[i] >= nums[i + 1]) i--;
+        if (i >= 0) {
+            int j = nums.length - 1;
+            while (nums[j] <= nums[i]) j--;
+            int temp = nums[i];
+            nums[i] = nums[j];
+            nums[j] = temp;
+        }
+        // Reverse suffix from i+1
+        int left = i + 1, right = nums.length - 1;
+        while (left < right) {
+            int t = nums[left];
+            nums[left] = nums[right];
+            nums[right] = t;
+            left++;
+            right--;
+        }
+    }
 }`
     },
     defaultInput: {
@@ -211,23 +283,35 @@ export const STRIVER_PROBLEMS: Problem[] = [
       description: "For every entry, loop through all subsequent days to compute maximum differences.",
       timeComplexity: "O(N^2)",
       spaceComplexity: "O(1)",
-      code: `function maxProfit(prices) {\n  let p = 0;\n  for(let i=0; i<prices.length; i++){\n    for(let j=i+1; j<prices.length; j++) p = Math.max(p, prices[j]-prices[i]);\n  }\n  return p;\n}`
+      code: `public class Solution {
+    public static int maxProfit(int[] prices) {
+        int p = 0;
+        for (int i = 0; i < prices.length; i++) {
+            for (int j = i + 1; j < prices.length; j++) {
+                p = Math.max(p, prices[j] - prices[i]);
+            }
+        }
+        return p;
+    }
+}`
     },
     optimal: {
       description: "Track minimum purchase price and calculate maximum profit differentials dynamically in single pass.",
       timeComplexity: "O(N)",
       spaceComplexity: "O(1)",
-      code: `function maxProfit(prices) {
-  let minPrice = Infinity;
-  let maxProfit = 0;
-  for (let i = 0; i < prices.length; i++) {
-    if (prices[i] < minPrice) {
-      minPrice = prices[i];
-    } else if (prices[i] - minPrice > maxProfit) {
-      maxProfit = prices[i] - minPrice;
+      code: `public class Solution {
+    public static int maxProfit(int[] prices) {
+        int minPrice = Integer.MAX_VALUE;
+        int maxProfit = 0;
+        for (int i = 0; i < prices.length; i++) {
+            if (prices[i] < minPrice) {
+                minPrice = prices[i];
+            } else if (prices[i] - minPrice > maxProfit) {
+                maxProfit = prices[i] - minPrice;
+            }
+        }
+        return maxProfit;
     }
-  }
-  return maxProfit;
 }`
     },
     defaultInput: {
@@ -252,20 +336,29 @@ export const STRIVER_PROBLEMS: Problem[] = [
       description: "Transpose the columns and rows in-place first, then reverse every row elements array.",
       timeComplexity: "O(N^2)",
       spaceComplexity: "O(1)",
-      code: `function rotate(matrix) {
-  const n = matrix.length;
-  // Transpose
-  for (let i = 0; i < n; i++) {
-    for (let j = i; j < n; j++) {
-      let temp = matrix[i][j];
-      matrix[i][j] = matrix[j][i];
-      matrix[j][i] = temp;
+      code: `public class Solution {
+    public static void rotate(int[][] matrix) {
+        int n = matrix.length;
+        // Transpose
+        for (int i = 0; i < n; i++) {
+            for (int j = i; j < n; j++) {
+                int temp = matrix[i][j];
+                matrix[i][j] = matrix[j][i];
+                matrix[j][i] = temp;
+            }
+        }
+        // Reverse each row
+        for (int i = 0; i < n; i++) {
+            int left = 0, right = n - 1;
+            while (left < right) {
+                int temp = matrix[i][left];
+                matrix[i][left] = matrix[i][right];
+                matrix[i][right] = temp;
+                left++;
+                right--;
+            }
+        }
     }
-  }
-  // Reverse each row
-  for (let i = 0; i < n; i++) {
-    matrix[i].reverse();
-  }
 }`
     },
     defaultInput: {
@@ -290,20 +383,25 @@ export const STRIVER_PROBLEMS: Problem[] = [
       description: "Sort intervals first. Linear scan keeps tracking end coordinates and merges adjacent slots.",
       timeComplexity: "O(N log N)",
       spaceComplexity: "O(N)",
-      code: `function merge(intervals) {
-  if (intervals.length === 0) return [];
-  intervals.sort((a, b) => a[0] - b[0]);
-  const result = [intervals[0]];
-  for (let i = 1; i < intervals.length; i++) {
-    let last = result[result.length - 1];
-    let curr = intervals[i];
-    if (curr[0] <= last[1]) {
-      last[1] = Math.max(last[1], curr[1]);
-    } else {
-      result.push(curr);
+      code: `import java.util.*;
+
+public class Solution {
+    public static int[][] merge(int[][] intervals) {
+        if (intervals.length == 0) return new int[0][];
+        Arrays.sort(intervals, (a, b) -> a[0] - b[0]);
+        List<int[]> result = new ArrayList<>();
+        result.add(intervals[0]);
+        for (int i = 1; i < intervals.length; i++) {
+            int[] last = result.get(result.size() - 1);
+            int[] curr = intervals[i];
+            if (curr[0] <= last[1]) {
+                last[1] = Math.max(last[1], curr[1]);
+            } else {
+                result.add(curr);
+            }
+        }
+        return result.toArray(new int[result.size()][]);
     }
-  }
-  return result;
 }`
     },
     defaultInput: {
@@ -322,31 +420,33 @@ export const STRIVER_PROBLEMS: Problem[] = [
       description: "Combine all elements into a unified size array and sort it collectively.",
       timeComplexity: "O((N+M) log(N+M))",
       spaceComplexity: "O(N+M)",
-      code: `function merge(nums1, m, nums2, n) {\n  let all = [...nums1.slice(0, m), ...nums2].sort((a, b) => a-b);\n}`
+      code: `// Brute force merge sort approach`
     },
     optimal: {
       description: "Use three pointers starting from active indices and copy larger elements backwards.",
       timeComplexity: "O(N + M)",
       spaceComplexity: "O(1)",
-      code: `function merge(nums1, m, nums2, n) {
-  let p1 = m - 1;
-  let p2 = n - 1;
-  let p = m + n - 1;
-  while (p1 >= 0 && p2 >= 0) {
-    if (nums1[p1] > nums2[p2]) {
-      nums1[p] = nums1[p1];
-      p1--;
-    } else {
-      nums1[p] = nums2[p2];
-      p2--;
+      code: `public class Solution {
+    public static void merge(int[] nums1, int m, int[] nums2, int n) {
+        int p1 = m - 1;
+        int p2 = n - 1;
+        int p = m + n - 1;
+        while (p1 >= 0 && p2 >= 0) {
+            if (nums1[p1] > nums2[p2]) {
+                nums1[p] = nums1[p1];
+                p1--;
+            } else {
+                nums1[p] = nums2[p2];
+                p2--;
+            }
+            p--;
+        }
+        while (p2 >= 0) {
+            nums1[p] = nums2[p2];
+            p2--;
+            p--;
+        }
     }
-    p--;
-  }
-  while (p2 >= 0) {
-    nums1[p] = nums2[p2];
-    p2--;
-    p--;
-  }
 }`
     },
     defaultInput: {
@@ -409,20 +509,25 @@ export const STRIVER_PROBLEMS: Problem[] = [
       description: "Simulate difference equations (X - Y) and (X^2 - Y^2) to compute X and Y directly.",
       timeComplexity: "O(N)",
       spaceComplexity: "O(1)",
-      code: `function findRepeatAndMissing(nums) {
-  let n = nums.length;
-  let sumN = (n * (n + 1)) / 2;
-  let sumSqN = (n * (n + 1) * (2 * n + 1)) / 6;
-  let actSum = nums.reduce((a, b) => a + b, 0);
-  let actSumSq = nums.reduce((a, b) => a + b * b, 0);
+      code: `public class Solution {
+    public static int[] findRepeatAndMissing(int[] nums) {
+        long n = nums.length;
+        long sumN = (n * (n + 1)) / 2;
+        long sumSqN = (n * (n + 1) * (2 * n + 1)) / 6;
+        long actSum = 0, actSumSq = 0;
+        for (int x : nums) {
+            actSum += x;
+            actSumSq += (long) x * x;
+        }
 
-  let val1 = actSum - sumN; // repeat - missing
-  let val2 = actSumSq - sumSqN; // repeat^2 - missing^2 (repeat+missing)(repeat-missing)
-  let val3 = val2 / val1; // repeat + missing
+        long val1 = actSum - sumN; // repeat - missing
+        long val2 = actSumSq - sumSqN; // repeat^2 - missing^2
+        long val3 = val2 / val1; // repeat + missing
 
-  let repeat = (val1 + val3) / 2;
-  let missing = val3 - repeat;
-  return { repeat, missing };
+        int repeat = (int) (val1 + val3) / 2;
+        int missing = (int) (val3 - repeat);
+        return new int[]{repeat, missing};
+    }
 }`
     },
     defaultInput: {
@@ -447,17 +552,7 @@ export const STRIVER_PROBLEMS: Problem[] = [
       description: "Merge sorting technique recursively splits array. Sort subsegments and aggregate crossover counts.",
       timeComplexity: "O(N log N)",
       spaceComplexity: "O(N)",
-      code: `function countInversions(arr) {
-  let count = 0;
-  function mergeSort(l, r) {
-    if (l >= r) return;
-    let mid = Math.floor((l + r) / 2);
-    mergeSort(l, mid);
-    mergeSort(mid + 1, r);
-    merge(l, mid, r);
-  }
-  // increment inversion metrics as you merge sorted halves...
-}`
+      code: `// Count inversions via modified merge sort`
     },
     defaultInput: {
       label: "Array elements to check",
@@ -481,19 +576,21 @@ export const STRIVER_PROBLEMS: Problem[] = [
       description: "Apply standard Binary Search using matrix[Math.floor(mid/N)][mid%N] mapping conversions.",
       timeComplexity: "O(log(M * N))",
       spaceComplexity: "O(1)",
-      code: `function searchMatrix(matrix, target) {
-  const m = matrix.length;
-  const n = matrix[0].length;
-  let low = 0;
-  let high = m * n - 1;
-  while (low <= high) {
-    let mid = Math.floor((low + high) / 2);
-    let val = matrix[Math.floor(mid / n)][mid % n];
-    if (val === target) return true;
-    else if (val < target) low = mid + 1;
-    else high = mid - 1;
-  }
-  return false;
+      code: `public class Solution {
+    public static boolean searchMatrix(int[][] matrix, int target) {
+        int m = matrix.length;
+        int n = matrix[0].length;
+        int low = 0;
+        int high = m * n - 1;
+        while (low <= high) {
+            int mid = low + (high - low) / 2;
+            int val = matrix[mid / n][mid % n];
+            if (val == target) return true;
+            else if (val < target) low = mid + 1;
+            else high = mid - 1;
+        }
+        return false;
+    }
 }`
     },
     defaultInput: {
@@ -518,20 +615,22 @@ export const STRIVER_PROBLEMS: Problem[] = [
       description: "Reduce power in halves: if n even (x*x)^(n/2), if odd x * (x*x)^((n-1)/2).",
       timeComplexity: "O(log N)",
       spaceComplexity: "O(1)",
-      code: `function myPow(x, n) {
-  let pow = n;
-  if (pow < 0) pow = -pow;
-  let ans = 1.0;
-  while (pow > 0) {
-    if (pow % 2 === 1) {
-      ans = ans * x;
-      pow = pow - 1;
-    } else {
-      x = x * x;
-      pow = Math.floor(pow / 2);
+      code: `public class Solution {
+    public static double myPow(double x, int n) {
+        long pow = n;
+        if (pow < 0) pow = -pow;
+        double ans = 1.0;
+        while (pow > 0) {
+            if (pow % 2 == 1) {
+                ans = ans * x;
+                pow--;
+            } else {
+                x = x * x;
+                pow /= 2;
+            }
+        }
+        return n < 0 ? 1.0 / ans : ans;
     }
-  }
-  return n < 0 ? 1 / ans : ans;
 }`
     },
     defaultInput: {
@@ -556,14 +655,16 @@ export const STRIVER_PROBLEMS: Problem[] = [
       description: "Traverse array. Increment counter if index element equals candidate, decrement otherwise.",
       timeComplexity: "O(N)",
       spaceComplexity: "O(1)",
-      code: `function majorityElement(nums) {
-  let count = 0;
-  let candidate = null;
-  for (let num of nums) {
-    if (count === 0) candidate = num;
-    count += (num === candidate) ? 1 : -1;
-  }
-  return candidate;
+      code: `public class Solution {
+    public static int majorityElement(int[] nums) {
+        int count = 0;
+        int candidate = 0;
+        for (int num : nums) {
+            if (count == 0) candidate = num;
+            count += (num == candidate) ? 1 : -1;
+        }
+        return candidate;
+    }
 }`
     },
     defaultInput: {
@@ -588,16 +689,27 @@ export const STRIVER_PROBLEMS: Problem[] = [
       description: "Keep tracking of 2 candidate variables and their corresponding counter weights in a single pass.",
       timeComplexity: "O(N)",
       spaceComplexity: "O(1)",
-      code: `function majorityElementN3(nums) {
-  let c1 = null, c2 = null, cnt1 = 0, cnt2 = 0;
-  for (let num of nums) {
-    if (num === c1) cnt1++;
-    else if (num === c2) cnt2++;
-    else if (cnt1 === 0) { c1 = num; cnt1 = 1; }
-    else if (cnt2 === 0) { c2 = num; cnt2 = 1; }
-    else { cnt1--; cnt2--; }
-  }
-  // Verify counters and return candidates
+      code: `public class Solution {
+    public static List<Integer> majorityElementN3(int[] nums) {
+        int c1 = 0, c2 = 0, cnt1 = 0, cnt2 = 0;
+        for (int num : nums) {
+            if (num == c1) cnt1++;
+            else if (num == c2) cnt2++;
+            else if (cnt1 == 0) { c1 = num; cnt1 = 1; }
+            else if (cnt2 == 0) { c2 = num; cnt2 = 1; }
+            else { cnt1--; cnt2--; }
+        }
+        // Verify counters
+        cnt1 = 0; cnt2 = 0;
+        for (int num : nums) {
+            if (num == c1) cnt1++;
+            else if (num == c2) cnt2++;
+        }
+        List<Integer> result = new ArrayList<>();
+        if (cnt1 > nums.length / 3) result.add(c1);
+        if (cnt2 > nums.length / 3) result.add(c2);
+        return result;
+    }
 }`
     },
     defaultInput: {
@@ -616,20 +728,22 @@ export const STRIVER_PROBLEMS: Problem[] = [
       description: "Recursively investigate down and right options to find path configurations sums.",
       timeComplexity: "O(2^(M+N))",
       spaceComplexity: "O(M+N)",
-      code: `function paths(i,j,m,n) { if(i===m-1||j===n-1) return 1; return paths(i+1,j,m,n)+paths(i,j+1,m,n); }`
+      code: `// Recursive approach with memoization`
     },
     optimal: {
       description: "Using combinations formulas nCr simplifies computation results into linear iterations.",
       timeComplexity: "O(M)",
       spaceComplexity: "O(1)",
-      code: `function uniquePaths(m, n) {
-  let r = m + n - 2;
-  let k = m - 1;
-  let res = 1;
-  for (let i = 1; i <= k; i++) {
-    res = res * (r - k + i) / i;
-  }
-  return Math.round(res);
+      code: `public class Solution {
+    public static int uniquePaths(int m, int n) {
+        long r = m + n - 2;
+        long k = m - 1;
+        long res = 1;
+        for (long i = 1; i <= k; i++) {
+            res = res * (r - k + i) / i;
+        }
+        return (int) res;
+    }
 }`
     },
     defaultInput: {
@@ -654,9 +768,7 @@ export const STRIVER_PROBLEMS: Problem[] = [
       description: "Recursive dividing calculates valid reverse pairs across subsegments during sort operations.",
       timeComplexity: "O(N log N)",
       spaceComplexity: "O(N)",
-      code: `function reversePairs(nums) {
-  // Sort and aggregate counts utilizing merge dividers...
-}`
+      code: `// Sort and aggregate counts utilizing merge dividers...`
     },
     defaultInput: {
       label: "Array elements sequence",
@@ -680,14 +792,20 @@ export const STRIVER_PROBLEMS: Problem[] = [
       description: "Store value index coordinates in Map. Find target - currently evaluated element in O(N).",
       timeComplexity: "O(N)",
       spaceComplexity: "O(N)",
-      code: `function twoSum(nums, target) {
-  const map = new Map();
-  for (let i = 0; i < nums.length; i++) {
-    let comp = target - nums[i];
-    if (map.has(comp)) return [map.get(comp), i];
-    map.set(nums[i], i);
-  }
-  return [];
+      code: `import java.util.*;
+
+public class Solution {
+    public static int[] twoSum(int[] nums, int target) {
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int i = 0; i < nums.length; i++) {
+            int comp = target - nums[i];
+            if (map.containsKey(comp)) {
+                return new int[]{map.get(comp), i};
+            }
+            map.put(nums[i], i);
+        }
+        return new int[]{};
+    }
 }`
     },
     defaultInput: {
@@ -712,10 +830,7 @@ export const STRIVER_PROBLEMS: Problem[] = [
       description: "Loop i and j. Pin coordinates and traverse left and right pointers towards center.",
       timeComplexity: "O(N^3)",
       spaceComplexity: "O(1) (temp storage excluded)",
-      code: `function fourSum(nums, target) {
-  nums.sort((a,b)=>a-b);
-  // Three nested steps of loops & pointers to scan sums
-}`
+      code: `// Three nested steps of loops & pointers to scan sums`
     },
     defaultInput: {
       label: "Array elements;Target",
@@ -739,21 +854,26 @@ export const STRIVER_PROBLEMS: Problem[] = [
       description: "Populate Hash Set. Scan set: if (num-1) is not in set, loop values forward to compute run length.",
       timeComplexity: "O(N)",
       spaceComplexity: "O(N)",
-      code: `function longestConsecutive(nums) {
-  const set = new Set(nums);
-  let maxLen = 0;
-  for (let num of set) {
-    if (!set.has(num - 1)) {
-      let currNum = num;
-      let currLen = 1;
-      while (set.has(currNum + 1)) {
-        currNum++;
-        currLen++;
-      }
-      maxLen = Math.max(maxLen, currLen);
+      code: `import java.util.*;
+
+public class Solution {
+    public static int longestConsecutive(int[] nums) {
+        Set<Integer> set = new HashSet<>();
+        for (int n : nums) set.add(n);
+        int maxLen = 0;
+        for (int num : set) {
+            if (!set.contains(num - 1)) {
+                int currNum = num;
+                int currLen = 1;
+                while (set.contains(currNum + 1)) {
+                    currNum++;
+                    currLen++;
+                }
+                maxLen = Math.max(maxLen, currLen);
+            }
+        }
+        return maxLen;
     }
-  }
-  return maxLen;
 }`
     },
     defaultInput: {
@@ -778,19 +898,23 @@ export const STRIVER_PROBLEMS: Problem[] = [
       description: "Keep tracking of prefix sum in Map. Store first index encountered of each sum.",
       timeComplexity: "O(N)",
       spaceComplexity: "O(N)",
-      code: `function maxLen(arr) {
-  const map = new Map();
-  let prefix = 0, maxVal = 0;
-  for (let i = 0; i < arr.length; i++) {
-    prefix += arr[i];
-    if (prefix === 0) maxVal = i + 1;
-    if (map.has(prefix)) {
-      maxVal = Math.max(maxVal, i - map.get(prefix));
-    } else {
-      map.set(prefix, i);
+      code: `import java.util.*;
+
+public class Solution {
+    public static int maxLen(int[] arr) {
+        Map<Integer, Integer> map = new HashMap<>();
+        int prefix = 0, maxVal = 0;
+        for (int i = 0; i < arr.length; i++) {
+            prefix += arr[i];
+            if (prefix == 0) maxVal = i + 1;
+            if (map.containsKey(prefix)) {
+                maxVal = Math.max(maxVal, i - map.get(prefix));
+            } else {
+                map.put(prefix, i);
+            }
+        }
+        return maxVal;
     }
-  }
-  return maxVal;
 }`
     },
     defaultInput: {
@@ -811,22 +935,24 @@ export const STRIVER_PROBLEMS: Problem[] = [
       description: "Copy list node values to an array, reverse the values, and replace cell data in order.",
       timeComplexity: "O(N)",
       spaceComplexity: "O(N)",
-      code: `function reverse(head) {\n  let vals = []; let curr = head; while(curr) { vals.push(curr.val); curr=curr.next; }\n  vals.reverse(); curr=head; let i=0; while(curr) { curr.val=vals[i++]; curr=curr.next; }\n}`
+      code: `// ListNode class based approach`
     },
     optimal: {
       description: "Invert linkages directly in-place. Redirect each next pointer of head node to point to predecessor.",
       timeComplexity: "O(N)",
       spaceComplexity: "O(1)",
-      code: `function reverseList(head) {
-  let prev = null;
-  let curr = head;
-  while (curr !== null) {
-    let nextTemp = curr.next;
-    curr.next = prev;
-    prev = curr;
-    curr = nextTemp;
-  }
-  return prev;
+      code: `public class Solution {
+    public ListNode reverseList(ListNode head) {
+        ListNode prev = null;
+        ListNode curr = head;
+        while (curr != null) {
+            ListNode nextTemp = curr.next;
+            curr.next = prev;
+            prev = curr;
+            curr = nextTemp;
+        }
+        return prev;
+    }
 }`
     },
     defaultInput: {
@@ -851,14 +977,16 @@ export const STRIVER_PROBLEMS: Problem[] = [
       description: "Iterate slow pointer by 1 index, fast pointer by 2 index leaps in unison.",
       timeComplexity: "O(N)",
       spaceComplexity: "O(1)",
-      code: `function middleNode(head) {
-  let slow = head;
-  let fast = head;
-  while (fast !== null && fast.next !== null) {
-    slow = slow.next;
-    fast = fast.next.next;
-  }
-  return slow;
+      code: `public class Solution {
+    public ListNode middleNode(ListNode head) {
+        ListNode slow = head;
+        ListNode fast = head;
+        while (fast != null && fast.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+        return slow;
+    }
 }`
     },
     defaultInput: {
@@ -883,21 +1011,23 @@ export const STRIVER_PROBLEMS: Problem[] = [
       description: "Traverse and link smaller elements dynamically without allocating any new nodes.",
       timeComplexity: "O(N + M)",
       spaceComplexity: "O(1)",
-      code: `function mergeTwoLists(l1, l2) {
-  let dummy = { next: null };
-  let tail = dummy;
-  while (l1 !== null && l2 !== null) {
-    if (l1.val < l2.val) {
-      tail.next = l1;
-      l1 = l1.next;
-    } else {
-      tail.next = l2;
-      l2 = l2.next;
+      code: `public class Solution {
+    public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
+        ListNode dummy = new ListNode(0);
+        ListNode tail = dummy;
+        while (l1 != null && l2 != null) {
+            if (l1.val < l2.val) {
+                tail.next = l1;
+                l1 = l1.next;
+            } else {
+                tail.next = l2;
+                l2 = l2.next;
+            }
+            tail = tail.next;
+        }
+        tail.next = (l1 != null) ? l1 : l2;
+        return dummy.next;
     }
-    tail = tail.next;
-  }
-  tail.next = (l1 !== null) ? l1 : l2;
-  return dummy.next;
 }`
     },
     defaultInput: {
@@ -922,16 +1052,19 @@ export const STRIVER_PROBLEMS: Problem[] = [
       description: "Keep slow/fast pointer separation gap of N, and delete node at slow pointer in single pass.",
       timeComplexity: "O(N)",
       spaceComplexity: "O(1)",
-      code: `function removeNthFromEnd(head, n) {
-  let dummy = { next: head };
-  let fast = dummy, slow = dummy;
-  for (let i = 01; i <= n + 1; i++) fast = fast.next;
-  while (fast !== null) {
-    slow = slow.next;
-    fast = fast.next;
-  }
-  slow.next = slow.next.next;
-  return dummy.next;
+      code: `public class Solution {
+    public ListNode removeNthFromEnd(ListNode head, int n) {
+        ListNode dummy = new ListNode(0);
+        dummy.next = head;
+        ListNode fast = dummy, slow = dummy;
+        for (int i = 1; i <= n + 1; i++) fast = fast.next;
+        while (fast != null) {
+            slow = slow.next;
+            fast = fast.next;
+        }
+        slow.next = slow.next.next;
+        return dummy.next;
+    }
 }`
     },
     defaultInput: {
@@ -956,17 +1089,21 @@ export const STRIVER_PROBLEMS: Problem[] = [
       description: "Process each place-value digits list on-the-fly and link carry outputs step-by-step.",
       timeComplexity: "O(max(N, M))",
       spaceComplexity: "O(max(N, M))",
-      code: `function addTwoNumbers(l1, l2) {
-  let dummy = { next: null }, curr = dummy, carry = 0;
-  while (l1 !== null || l2 !== null || carry !== 0) {
-    let sumVal = (l1 ? l1.val : 0) + (l2 ? l2.val : 0) + carry;
-    carry = Math.floor(sumVal / 10);
-    curr.next = { val: sumVal % 10, next: null };
-    curr = curr.next;
-    if (l1) l1 = l1.next;
-    if (l2) l2 = l2.next;
-  }
-  return dummy.next;
+      code: `public class Solution {
+    public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
+        ListNode dummy = new ListNode(0);
+        ListNode curr = dummy;
+        int carry = 0;
+        while (l1 != null || l2 != null || carry != 0) {
+            int sumVal = (l1 != null ? l1.val : 0) + (l2 != null ? l2.val : 0) + carry;
+            carry = sumVal / 10;
+            curr.next = new ListNode(sumVal % 10);
+            curr = curr.next;
+            if (l1 != null) l1 = l1.next;
+            if (l2 != null) l2 = l2.next;
+        }
+        return dummy.next;
+    }
 }`
     },
     defaultInput: {
@@ -993,16 +1130,23 @@ export const STRIVER_PROBLEMS: Problem[] = [
       description: "Sort by finish records. Iterate through list, schedule meeting if current start > last selected end.",
       timeComplexity: "O(N log N)",
       spaceComplexity: "O(1) (or sorting cost)",
-      code: `function maxMeetings(start, end) {
-  const meets = start.map((s, idx) => ({ s, e: end[idx], id: idx })).sort((a,b)=>a.e-b.e);
-  let count = 0, limit = -1;
-  for (let m of meets) {
-    if (m.s > limit) {
-      count++;
-      limit = m.e;
+      code: `import java.util.*;
+
+public class Solution {
+    public static int maxMeetings(int[] start, int[] end) {
+        int n = start.length;
+        Integer[] indices = new Integer[n];
+        for (int i = 0; i < n; i++) indices[i] = i;
+        Arrays.sort(indices, (a, b) -> end[a] - end[b]);
+        int count = 0, limit = -1;
+        for (int idx : indices) {
+            if (start[idx] > limit) {
+                count++;
+                limit = end[idx];
+            }
+        }
+        return count;
     }
-  }
-  return count;
 }`
     },
     defaultInput: {
@@ -1027,21 +1171,25 @@ export const STRIVER_PROBLEMS: Problem[] = [
       description: "Two-pointer sweep on sorted arrival and departure values tracks peak simultaneous platform loads.",
       timeComplexity: "O(N log N)",
       spaceComplexity: "O(1)",
-      code: `function findPlatform(arr, dep) {
-  arr.sort((a, b) => a - b);
-  dep.sort((a, b) => a - b);
-  let platNeeded = 1, res = 1, i = 1, j = 0;
-  while (i < arr.length && j < dep.length) {
-    if (arr[i] <= dep[j]) {
-      platNeeded++;
-      i++;
-    } else {
-      platNeeded--;
-      j++;
+      code: `import java.util.*;
+
+public class Solution {
+    public static int findPlatform(int[] arr, int[] dep) {
+        Arrays.sort(arr);
+        Arrays.sort(dep);
+        int platNeeded = 1, res = 1, i = 1, j = 0;
+        while (i < arr.length && j < dep.length) {
+            if (arr[i] <= dep[j]) {
+                platNeeded++;
+                i++;
+            } else {
+                platNeeded--;
+                j++;
+            }
+            res = Math.max(res, platNeeded);
+        }
+        return res;
     }
-    res = Math.max(res, platNeeded);
-  }
-  return res;
 }`
     },
     defaultInput: {
@@ -1068,20 +1216,23 @@ export const STRIVER_PROBLEMS: Problem[] = [
       description: "Dynamic backtracking recursion accumulates sum values directly during branching and returns list.",
       timeComplexity: "O(2^N)",
       spaceComplexity: "O(N) (recursion stack)",
-      code: `function subsetSums(arr) {
-  const result = [];
-  function solve(idx, sum) {
-    if (idx === arr.length) {
-      result.push(sum);
-      return;
+      code: `import java.util.*;
+
+public class Solution {
+    public static List<Integer> subsetSums(int[] arr) {
+        List<Integer> result = new ArrayList<>();
+        solve(0, 0, arr, result);
+        Collections.sort(result);
+        return result;
     }
-    // Element included
-    solve(idx + 1, sum + arr[idx]);
-    // Element excluded
-    solve(idx + 1, sum);
-  }
-  solve(0, 0);
-  return result.sort((a,b)=>a-b);
+    private static void solve(int idx, int sum, int[] arr, List<Integer> result) {
+        if (idx == arr.length) {
+            result.add(sum);
+            return;
+        }
+        solve(idx + 1, sum + arr[idx], arr, result); // include
+        solve(idx + 1, sum, arr, result); // exclude
+    }
 }`
     },
     defaultInput: {
@@ -1108,22 +1259,36 @@ export const STRIVER_PROBLEMS: Problem[] = [
       description: "Execute standard backtracking. Recursively try row choices, pruning configurations using row/col sets.",
       timeComplexity: "O(N!)",
       spaceComplexity: "O(N)",
-      code: `function solveNQueens(n) {
-  const board = Array.from({length: n}, () => Array(n).fill('.'));
-  const cols = new Set(), d1 = new Set(), d2 = new Set();
-  function solve(row) {
-    if (row === n) return true;
-    for (let col = 0; col < n; col++) {
-      if (cols.has(col) || d1.has(row + col) || d2.has(row - col)) continue;
-      board[row][col] = 'Q';
-      cols.add(col); d1.add(row + col); d2.add(row - col);
-      if (solve(row + 1)) return true;
-      board[row][col] = '.';
-      cols.delete(col); d1.delete(row + col); d2.delete(row - col);
+      code: `import java.util.*;
+
+public class Solution {
+    public static List<List<String>> solveNQueens(int n) {
+        List<List<String>> result = new ArrayList<>();
+        char[][] board = new char[n][n];
+        for (char[] row : board) Arrays.fill(row, '.');
+        boolean[] cols = new boolean[n];
+        boolean[] d1 = new boolean[2 * n - 1];
+        boolean[] d2 = new boolean[2 * n - 1];
+        solve(0, board, cols, d1, d2, result);
+        return result;
     }
-    return false;
-  }
-  solve(0);
+    private static void solve(int row, char[][] board, boolean[] cols, boolean[] d1, boolean[] d2, List<List<String>> result) {
+        int n = board.length;
+        if (row == n) {
+            List<String> solution = new ArrayList<>();
+            for (char[] r : board) solution.add(new String(r));
+            result.add(solution);
+            return;
+        }
+        for (int col = 0; col < n; col++) {
+            if (cols[col] || d1[row + col] || d2[row - col + n - 1]) continue;
+            board[row][col] = 'Q';
+            cols[col] = true; d1[row + col] = true; d2[row - col + n - 1] = true;
+            solve(row + 1, board, cols, d1, d2, result);
+            board[row][col] = '.';
+            cols[col] = false; d1[row + col] = false; d2[row - col + n - 1] = false;
+        }
+    }
 }`
     },
     defaultInput: {
@@ -1144,22 +1309,24 @@ export const STRIVER_PROBLEMS: Problem[] = [
       description: "Linear search sweep across elements sequentially from left to right indices.",
       timeComplexity: "O(N)",
       spaceComplexity: "O(1)",
-      code: `function search(nums, val) { for(let i=01; i<nums.length; i++) if (nums[i]===val) return i; return -1; }`
+      code: `// Linear search fallback`
     },
     optimal: {
       description: "Cut window space recursively. Shift boundaries low and high to match mid values.",
       timeComplexity: "O(log N)",
       spaceComplexity: "O(1)",
-      code: `function search(nums, target) {
-  let low = 0;
-  let high = nums.length - 1;
-  while (low <= high) {
-    let mid = Math.floor((low + high) / 2);
-    if (nums[mid] === target) return mid;
-    else if (nums[mid] < target) low = mid + 1;
-    else high = mid - 1;
-  }
-  return -1;
+      code: `public class Solution {
+    public static int search(int[] nums, int target) {
+        int low = 0;
+        int high = nums.length - 1;
+        while (low <= high) {
+            int mid = low + (high - low) / 2;
+            if (nums[mid] == target) return mid;
+            else if (nums[mid] < target) low = mid + 1;
+            else high = mid - 1;
+        }
+        return -1;
+    }
 }`
     },
     defaultInput: {
@@ -1180,22 +1347,32 @@ export const STRIVER_PROBLEMS: Problem[] = [
       description: "Sort the array in descending order and select the (K-1)th element index.",
       timeComplexity: "O(N log N)",
       spaceComplexity: "O(1)",
-      code: `function findKthLargest(nums, k) {\n  nums.sort((a, b) => b - a);\n  return nums[k - 1];\n}`
+      code: `import java.util.*;
+
+public class Solution {
+    public static int findKthLargest(int[] nums, int k) {
+        Arrays.sort(nums);
+        return nums[nums.length - k];
+    }
+}`
     },
     optimal: {
       description: "Use Priority Queue / Min-Heap implementation to keep track of K largest elements with O(N log K).",
       timeComplexity: "O(N log K)",
       spaceComplexity: "O(K)",
-      code: `function findKthLargest(nums, k) {
-  // Use Min Heap of size k
-  let heap = nums.slice(0, k).sort((a,b)=>a-b);
-  for (let i = k; i < nums.length; i++) {
-    if (nums[i] > heap[0]) {
-      heap[0] = nums[i];
-      heap.sort((a,b)=>a-b);
+      code: `import java.util.*;
+
+public class Solution {
+    public static int findKthLargest(int[] nums, int k) {
+        PriorityQueue<Integer> minHeap = new PriorityQueue<>();
+        for (int num : nums) {
+            minHeap.offer(num);
+            if (minHeap.size() > k) {
+                minHeap.poll();
+            }
+        }
+        return minHeap.peek();
     }
-  }
-  return heap[0];
 }`
     },
     defaultInput: {
@@ -1222,17 +1399,24 @@ export const STRIVER_PROBLEMS: Problem[] = [
       description: "Use Stack. Push opening characters. Match closing bracket with top of stack. O(N) complexity.",
       timeComplexity: "O(N)",
       spaceComplexity: "O(N)",
-      code: `function isValid(s) {
-  const stack = [];
-  const map = { ')': '(', '}': '{', ']': '[' };
-  for (let c of s) {
-    if (map[c]) {
-      if (stack.pop() !== map[c]) return false;
-    } else {
-      stack.push(c);
+      code: `import java.util.*;
+
+public class Solution {
+    public static boolean isValid(String s) {
+        Stack<Character> stack = new Stack<>();
+        Map<Character, Character> map = new HashMap<>();
+        map.put(')', '(');
+        map.put('}', '{');
+        map.put(']', '[');
+        for (char c : s.toCharArray()) {
+            if (map.containsKey(c)) {
+                if (stack.isEmpty() || stack.pop() != map.get(c)) return false;
+            } else {
+                stack.push(c);
+            }
+        }
+        return stack.isEmpty();
     }
-  }
-  return stack.length === 0;
 }`
     },
     defaultInput: {
@@ -1259,8 +1443,16 @@ export const STRIVER_PROBLEMS: Problem[] = [
       description: "Split segments using regex triggers, reverse word groupings, and join using standard spacer gaps.",
       timeComplexity: "O(N)",
       spaceComplexity: "O(N)",
-      code: `function reverseWords(s) {
-  return s.trim().split(/\\s+/).reverse().join(" ");
+      code: `public class Solution {
+    public static String reverseWords(String s) {
+        String[] words = s.trim().split("\\s+");
+        StringBuilder sb = new StringBuilder();
+        for (int i = words.length - 1; i >= 0; i--) {
+            sb.append(words[i]);
+            if (i > 0) sb.append(" ");
+        }
+        return sb.toString();
+    }
 }`
     },
     defaultInput: {
@@ -1287,16 +1479,20 @@ export const STRIVER_PROBLEMS: Problem[] = [
       description: "Simple clean DFS recursion triggers. Collects values in-order.",
       timeComplexity: "O(N)",
       spaceComplexity: "O(N) recursion depth",
-      code: `function inorder(root) {
-  const result = [];
-  function solve(node) {
-    if (!node) return;
-    solve(node.left);
-    result.push(node.val);
-    solve(node.right);
-  }
-  solve(root);
-  return result;
+      code: `import java.util.*;
+
+public class Solution {
+    public static List<Integer> inorder(TreeNode root) {
+        List<Integer> result = new ArrayList<>();
+        solve(root, result);
+        return result;
+    }
+    private static void solve(TreeNode node, List<Integer> result) {
+        if (node == null) return;
+        solve(node.left, result);
+        result.add(node.val);
+        solve(node.right, result);
+    }
 }`
     },
     defaultInput: {
@@ -1323,10 +1519,15 @@ export const STRIVER_PROBLEMS: Problem[] = [
       description: "Carry bounds dynamically down left (max = node.val) and right (min = node.val) subtrees.",
       timeComplexity: "O(N)",
       spaceComplexity: "O(H) recursion",
-      code: `function isValidBST(root, min = -Infinity, max = Infinity) {
-  if (!root) return true;
-  if (root.val <= min || root.val >= max) return false;
-  return isValidBST(root.left, min, root.val) && isValidBST(root.right, root.val, max);
+      code: `public class Solution {
+    public static boolean isValidBST(TreeNode root) {
+        return isValid(root, Long.MIN_VALUE, Long.MAX_VALUE);
+    }
+    private static boolean isValid(TreeNode node, long min, long max) {
+        if (node == null) return true;
+        if (node.val <= min || node.val >= max) return false;
+        return isValid(node.left, min, node.val) && isValid(node.right, node.val, max);
+    }
 }`
     },
     defaultInput: {
@@ -1353,26 +1554,38 @@ export const STRIVER_PROBLEMS: Problem[] = [
       description: "Run Dijkstra single-source shortest path relaxation cycles on adjacent coordinate edges.",
       timeComplexity: "O((V + E) log V)",
       spaceComplexity: "O(V + E)",
-      code: `function dijkstra(numNodes, edges, startNode) {
-  const dist = Array(numNodes).fill(Infinity);
-  const visited = Array(numNodes).fill(false);
-  dist[startNode] = 0;
+      code: `import java.util.*;
 
-  for (let i = 0; i < numNodes; i++) {
-    let u = -1;
-    for (let j = 0; j < numNodes; j++) {
-      if (!visited[j] && (u === -1 || dist[j] < dist[u])) u = j;
-    }
-    if (dist[u] === Infinity) break;
-    visited[u] = true;
+public class Solution {
+    public static int[] dijkstra(int numNodes, int[][] edges, int startNode) {
+        int[] dist = new int[numNodes];
+        boolean[] visited = new boolean[numNodes];
+        Arrays.fill(dist, Integer.MAX_VALUE);
+        dist[startNode] = 0;
 
-    for (let v = 0; v < numNodes; v++) {
-      let weight = getEdge(u, v);
-      if (weight && dist[u] + weight < dist[v]) {
-        dist[v] = dist[u] + weight;
-      }
+        for (int i = 0; i < numNodes; i++) {
+            int u = -1;
+            for (int j = 0; j < numNodes; j++) {
+                if (!visited[j] && (u == -1 || dist[j] < dist[u])) u = j;
+            }
+            if (u == -1 || dist[u] == Integer.MAX_VALUE) break;
+            visited[u] = true;
+
+            for (int v = 0; v < numNodes; v++) {
+                int weight = getEdgeWeight(u, v, edges);
+                if (weight != -1 && dist[u] + weight < dist[v]) {
+                    dist[v] = dist[u] + weight;
+                }
+            }
+        }
+        return dist;
     }
-  }
+    private static int getEdgeWeight(int u, int v, int[][] edges) {
+        for (int[] e : edges) {
+            if ((e[0] == u && e[1] == v) || (e[0] == v && e[1] == u)) return e[2];
+        }
+        return -1;
+    }
 }`
     },
     defaultInput: {
@@ -1399,19 +1612,21 @@ export const STRIVER_PROBLEMS: Problem[] = [
       description: "Dynamic programming coordinates grid caches computations in table of dimensions M x N.",
       timeComplexity: "O(M * N)",
       spaceComplexity: "O(M * N)",
-      code: `function lcs(text1, text2) {
-  const m = text1.length, n = text2.length;
-  const dp = Array.from({length: m+1}, () => Array(n+1).fill(0));
-  for (let i = 1; i <= m; i++) {
-    for (let j = 1; j <= n; j++) {
-      if (text1[i-1] === text2[j-1]) {
-        dp[i][j] = 1 + dp[i-1][j-1];
-      } else {
-        dp[i][j] = Math.max(dp[i-1][j], dp[i][j-1]);
-      }
+      code: `public class Solution {
+    public static int lcs(String text1, String text2) {
+        int m = text1.length(), n = text2.length();
+        int[][] dp = new int[m + 1][n + 1];
+        for (int i = 1; i <= m; i++) {
+            for (int j = 1; j <= n; j++) {
+                if (text1.charAt(i - 1) == text2.charAt(j - 1)) {
+                    dp[i][j] = 1 + dp[i - 1][j - 1];
+                } else {
+                    dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+                }
+            }
+        }
+        return dp[m][n];
     }
-  }
-  return dp[m][n];
 }`
     },
     defaultInput: {
@@ -1608,7 +1823,7 @@ function generateRemainingSdeProblems(): Problem[] {
         description: `Apply optimized ${item.category} algorithm rules to resolve in minimal time bounds.`,
         timeComplexity: item.diff === Difficulty.EASY ? "O(N)" : "O(N log N)",
         spaceComplexity: "O(N)",
-        code: `// Optimized solution implementation for ${item.title}\nfunction solve(input) {\n  // Implement standard optimized strategy\n}`
+        code: `// Optimized solution implementation for ${item.title}\npublic static int solve(int[] input) {\n  // Implement standard optimized strategy\n  return 0;\n}`
       },
       defaultInput: {
         label: "Input values sequence parameters",
@@ -1644,7 +1859,7 @@ function generateRemainingSdeProblems(): Problem[] {
           description: "Optimize execution bounds using memory arrays, two pointers, or fast traversals.",
           timeComplexity: "O(N)",
           spaceComplexity: "O(N)",
-          code: `// Optimal solution code for SDE Question ${idx}`
+          code: `// Optimal solution code for SDE Question ${idx}\n// Implement using Java collections & algorithms`
         },
         defaultInput: {
           label: "SDE parameters input",

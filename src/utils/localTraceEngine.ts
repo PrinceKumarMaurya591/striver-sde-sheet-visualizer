@@ -1,12 +1,12 @@
 /**
  * Local Trace Engine
- * 
- * Provides static, API-key-free execution tracing for JavaScript DSA algorithms.
+ *
+ * Provides static, API-key-free execution tracing for Java DSA algorithms.
  * Falls back to this engine when Gemini API is unavailable.
- * 
+ *
  * Two modes:
  * 1. Pre-built trace generators for known algorithm patterns (from striverData)
- * 2. Generic JavaScript execution tracer for arbitrary user code
+ * 2. Generic Java execution tracer for arbitrary user code
  */
 
 import { TraceStep } from "../types";
@@ -140,16 +140,16 @@ function detectAlgorithmFromCode(codeSnippet: string): AlgorithmPattern | null {
 }
 
 // ──────────────────────────────────────────────
-// Generic JavaScript Execution Tracer
+// Generic Java Execution Tracer
 // ──────────────────────────────────────────────
 
 /**
- * The generic tracer instruments the user's JavaScript code and executes it
- * in a sandboxed VM, recording variable state changes at each step.
- * 
+ * The generic tracer instruments the user's Java code patterns and simulates
+ * execution, recording variable state changes at each step.
+ *
  * It works by:
- * 1. Wrapping the user's code inside a traced function
- * 2. Proxying array/object mutations
+ * 1. Parsing the user's Java code for algorithm patterns
+ * 2. Simulating array/object mutations
  * 3. Recording state snapshots at each loop iteration / key operation
  */
 
@@ -281,8 +281,8 @@ function extractVariables(code: string): string[] {
     });
   }
   
-  // Remove duplicates and common JS built-ins
-  return [...new Set(vars)].filter(v => 
+  // Remove duplicates and common Java built-ins
+  return [...new Set(vars)].filter(v =>
     !["i", "j", "k", "idx", "index", "len", "length", "n", "m", "temp", "tmp", "result", "res", "arr", "nums", "array"].includes(v)
   );
 }
@@ -684,7 +684,7 @@ function simulateGeneric(
  * Main entry point: generate a visual trace locally without any API key.
  * 
  * @param problemTitle - The title/name of the algorithm problem
- * @param codeSnippet  - The user's JavaScript code
+ * @param codeSnippet  - The user's Java code
  * @param customInput  - Input data (comma-separated, etc.)
  * @returns TraceStep[] array compatible with the visualizer
  */
